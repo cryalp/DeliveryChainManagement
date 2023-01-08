@@ -27,4 +27,5 @@ replay_pid*
 .vscode**
 keystore.pfx
 **\target**
-#application.properties
+#git update-index --assume-unchanged Java/DeliveryChain_Master_RAW.sql PASSWORD_CHANGES
+#git update-index --assume-unchanged "Java/src/main/resources/application.properties" PASSWORD_CHANGES

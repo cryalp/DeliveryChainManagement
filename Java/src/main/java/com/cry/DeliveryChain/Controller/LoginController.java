@@ -1,10 +1,12 @@
 package com.cry.DeliveryChain.Controller;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import com.cry.DeliveryChain.Core.Functions;
 
 @Controller
 @RequestMapping(value = "/Login")
@@ -16,16 +18,17 @@ public class LoginController {
     @Value("${App.Password}")
     private String appPassword;
 
+    private Functions _functions = new Functions();
 
-    public LoginController() {
-    }
+    public LoginController() {}
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String Index(HttpSession httpSession) {
         try {
             return IsLoggedIn(httpSession) ? "redirect:/" : "Login/Index";
-        } catch (Exception e) {
-            System.err.println(e.toString());
+        }
+        catch (Exception e) {
+            _functions.Logger(e.getMessage());
             return "Login/Index";
         }
     }
@@ -38,8 +41,9 @@ public class LoginController {
                 return "redirect:/";
             }
             return "redirect:/Login/";
-        } catch (Exception e) {
-            System.err.println(e.toString());
+        }
+        catch (Exception e) {
+            _functions.Logger(e.getMessage());
             return "redirect:/Login/";
         }
     }
@@ -49,8 +53,34 @@ public class LoginController {
         try {
             httpSession.invalidate();
             return "redirect:/Login/";
-        } catch (Exception e) {
-            System.err.println(e.toString());
+        }
+        catch (Exception e) {
+            _functions.Logger(e.getMessage());
+            return "redirect:/Login/";
+        }
+    }
+
+    @RequestMapping(value = "/Register", method = RequestMethod.GET)
+    public String Register(HttpSession httpSession) {
+        try {
+            httpSession.invalidate();
+            return "/Login/Register/Index";
+        }
+        catch (Exception e) {
+            _functions.Logger(e.getMessage());
+            return "redirect:/Login/";
+        }
+    }
+
+    @RequestMapping(value = "/Register", method = RequestMethod.POST)
+    public String Register(String Username, String Password, String PasswordConfirm) {
+        try {
+            
+
+            return "/Login/Register/Index";
+        }
+        catch (Exception e) {
+            _functions.Logger(e.getMessage());
             return "redirect:/Login/";
         }
     }
@@ -58,8 +88,9 @@ public class LoginController {
     public Boolean IsLoggedIn(HttpSession session) {
         try {
             return session.getAttribute("LOGIN").equals("LOGGED_IN");
-        } catch (Exception e) {
-            System.err.println(e.toString());
+        }
+        catch (Exception e) {
+            _functions.Logger(e.getMessage());
             return false;
         }
     }
