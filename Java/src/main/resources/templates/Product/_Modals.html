@@ -1,0 +1,186 @@
+<ModalsLayout xmlns:th="http://www.w3.org/1999/xhtml">
+    <!-- Add Modal HTML -->
+    <div id="addProductModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Ürün Ekle</h4>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addProductForm">
+                            <div class="input-group mb-3">
+                                <label for="addHeader" class="col-md-2 col-form-label">Başlık:</label>
+                                <div class="col-md-10">
+                                    <input id="addHeader" name="Header" type="text" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label for="addDescription" class="col-md-2 col-form-label">Açıklama:</label>
+                                <div class="col-md-10">
+                                    <input id="addDescription" name="Description" type="text" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label for="addPrice" class="col-md-2 col-form-label">Fiyat:</label>
+                                <div class="col-md-10">
+                                    <input id="addPrice" name="Price" min="0.00" step="0.1" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label for="addQuantity" class="col-md-2 col-form-label">Miktar:</label>
+                                <div class="col-md-10">
+                                    <input id="addQuantity" name="Quantity" type="number" min="0" step="1" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label for="addAdditionDate" class="col-md-2 col-form-label">Eklenme Tarih:</label>
+                                <div class="col-md-10">
+                                    <input id="addAdditionDate" name="AdditionDate" type="date" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label for="addPhoto" class="col-md-2 col-form-label">Fotoğraf</label>
+                                <div class="col-md-10">
+                                    <img id="addPhotoImg"
+                                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAQAAAAAYLlVAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfkAxgQICe/pMQtAAADZklEQVRo3u2ZS0hUURjHf3dGHc1X4ytLkUxL3TgliUgJFm60jSCRgZtcRA8iCNpGFEi6qUVCRIuwhVEE7UqCqKiwjNRMkdJeYva0JsdRR53bIjHvODP3nDv3uvL/LWfu9/+dxz3nfOfCqlYVmRRskSYw9lQaLlzk4sSOh1EG6OY9syvT6jxO0YMXdUnMMUIbu4mx2jyWRgbxa8z/x29aybHS3smFgJYvj6eUWmW/livM69irqLymzAr7GFqYE7BXUeki33yAeiYE7VVU2ogz134DLyTsVbzsNRfgiNDoL40OEsyzj+eepL2KmwqR1GIL6SaKpaGT2GkeQAGpBvrNhd0sgByRVMuULfImiAEkG7CHBJGdIcLNNHKJAbgN5Z7EZxbACPMGAEaZMgvgDeMGAHpFsMUAhumTtp/gscjfxAA83EaVBHjOS2noMMqmW2ohnmK/mfYADUxKALQTbzaAg/PCO2I3hWbbA6TQJoQwyA4r7AFSaWVa9zhWLpNSb5NxUko1tZTzkx94ecAXinCG+LeHaxynD3BSzz62kc4ME9Jv0ILSOEYnEwtVwDBHSQIUCmiiP6An5hnjBtU4ABsV3GUWFRUf77iIK3QFFro0K6GFSk0PzXKHJrrwo5BJCSXk4sTGJKP008UQM0AmhzhMhibXCGe5Kle4bacv6AiP0Uwx0Yv4UUQtLmYKmRzgWdCJ6uGEzJkii0dhptkY7TRQSOKCtUIsWVTRzCt8IZ/6RZ3oENg4x0kdxDm+84ERxvGTwHo2ksUanWd6qOWjSPvL+Cp9BhaLMyL2Ni5ZZK8ytLxkW74bbqZGfLJIKo89+gCVZFsGADWBMyUQwM4ug9c2YiomNzxAhoEaSEbpuMIDbCTLUgA7W8MDbCHRUgAo0pYrgQD5ls4AgBxtE7UAirV3XACkkRIaIIZ1lgMkaE8TgQDGylAZBXhoAaLNvloKoijtedkW8GO0VDIjsoV7CxRDFxHyfRASQMW/AgCaklULMG3wJkBGPm2lrQXwMGw5wDifQgP4eWj5IPSGA4AOBiy193Fd796kUaoKlo2bJOkxOjit+1HCaNwnT6SbHBzkbcjPMkbDzeVgW13wzVchjzqqyCdZu2xIS8GPl890cosnzIgC/FMcGaTgiAgA5vnDN9wrssStyoj+AhbAtJAsggKZAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIwLTAzLTI0VDE2OjMyOjM5KzAwOjAwFC32vAAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMC0wMy0yNFQxNjozMjozOSswMDowMGVwTgAAAAAASUVORK5CYII"
+                                        alt="#" class="ms-auto me-auto d-block rounded-circle w-192px h-192px" />
+                                    <input id="addPhoto" name="Photo" type="file" class="d-none" accept="image/png, image/jpeg, image/jpg" required>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <label for="addIsActive" class="col-md-2 col-form-label">Aktif Mi?:</label>
+                                <div class="col-md-10">
+                                    <input id="addIsActive" name="IsActive" type="checkbox" class="d-block form-check-input" required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">İptal Et</button>
+                        <button id="addProductSubmit" type="button" class="btn btn-success">Ekle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Edit Modal HTML -->
+    <div id="editProductModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ürünü Düzenle</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProductForm">
+                        <div class="input-group mb-3">
+                            <label for="editHeader" class="col-md-2 col-form-label">Başlık:</label>
+                            <div class="col-md-10">
+                                <input id="editHeader" name="Header" type="text" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="editDescription" class="col-md-2 col-form-label">Açıklama:</label>
+                            <div class="col-md-10">
+                                <input id="editDescription" name="Description" type="text" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="editPrice" class="col-md-2 col-form-label">Fiyat:</label>
+                            <div class="col-md-10">
+                                <input id="editPrice" name="Price" min="0.00" step="0.1" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="editQuantity" class="col-md-2 col-form-label">Miktar:</label>
+                            <div class="col-md-10">
+                                <input id="editQuantity" name="Quantity" type="number" min="0" step="1" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="editAdditionDate" class="col-md-2 col-form-label">Eklenme Tarih:</label>
+                            <div class="col-md-10">
+                                <input id="editAdditionDate" name="AdditionDate" type="date" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="editPhoto" class="col-md-2 col-form-label">Fotoğraflar</label>
+                            <div class="col-md-3">
+                                <input id="editPhoto" name="Photo" type="file" class="d-none" value="" accept="image/png, image/jpeg, image/jpg">
+                                <img id="editPhotoImg" src="#" alt="#" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="editIsActive" class="col-md-2 col-form-label">Aktif Mi?:</label>
+                            <div class="col-md-10">
+                                <input id="editIsActive" name="IsActive" type="checkbox" class="d-block form-check-input" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                    <button id="editProductSubmit" type="button" class="btn btn-primary">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Delete Modal HTML -->
+    <div id="deleteProductModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Ürünü Sil</h4>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Ürünü silmek istediğinize emin misiniz?</p>
+                        <p class="text-warning">Bu işlem geri alınamaz.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                        <button id="deleteProductSubmit" type="button" class="btn btn-danger">Sil</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Success Modal -->
+    <div id="alertSuccessModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">ÜrünMatik</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                    <p>İşlem başarıyla gerçekleştirildi.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Alert Fail Modal -->
+    <div id="alertFailModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ürün</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                    <p>İşlem gerçekleştirilemedi. Lütfen tekrar deneyiniz.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ModalsLayout>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head th:insert="./Layouts/_Head :: head">
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">DeliveryChain</title>
+</head>
+<body>
+<!-- Main Navigation -->
+<div th:replace="./Layouts/_Header :: header"></div>
+
+<!-- Content Section -->
+<section layout:fragment="content"></section>
+
+<!-- Footer -->
+<div th:replace="./Layouts/_Footer :: footer"></div>
+
+<div th:replace="./Layouts/_Scripts :: ScriptsLayout"></div>
+</body>
+</html>
