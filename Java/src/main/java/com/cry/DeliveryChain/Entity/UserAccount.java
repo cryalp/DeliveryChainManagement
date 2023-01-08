@@ -1,28 +1,26 @@
 package com.cry.DeliveryChain.Entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
-@Entity(name = "Supplier")
-@Table(name = "Supplier")
-public class Supplier {
+@Entity(name = "UserAccount")
+@Table(name = "UserAccount")
+public class UserAccount {
     @Id
     @Column(name = "Id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer Id;
 
-    @Column(name = "Name")
-    public String Name;
+    @Column(name = "Email")
+    public String Email;
 
     @Column(name = "Username")
     public String Username;
@@ -30,11 +28,14 @@ public class Supplier {
     @Column(name = "Password")
     public String Password;
 
-    @Column(name = "CreationDate")
-    public LocalDate CreationDate;
+    @Column(name = "AccountType")
+    public String AccountType;
 
-    @Column(name = "ProfilePhoto")
-    public String ProfilePhoto;
+    @Column(name = "CreationDate")
+    public LocalDateTime CreationDate;
+
+    @Column(name = "Photo")
+    public String Photo;
 
     @Column(name = "IsActive")
     public Boolean IsActive;
@@ -44,15 +45,15 @@ public class Supplier {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     public UUID UniqueId;
 
-    public Supplier() {}
+    public UserAccount() {}
 
-    public Supplier(String Name, String Username, String Password, LocalDate CreationDate,
-        String ProfilePhoto, Boolean IsActive, UUID UniqueId) {
-        this.Name = Name;
+    public UserAccount(String Email, String Username, String Password, String AccountType, LocalDateTime CreationDate, String Photo, Boolean IsActive, UUID UniqueId) {
+        this.Email = Email;
         this.Username = Username;
         this.Password = Password;
+        this.AccountType = AccountType;
         this.CreationDate = CreationDate;
-        this.ProfilePhoto = ProfilePhoto;
+        this.Photo = Photo;
         this.IsActive = IsActive;
         this.UniqueId = UniqueId;
     }

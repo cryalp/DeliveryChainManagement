@@ -5,11 +5,9 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 
 import com.cry.DeliveryChain.Entity.Product;
 
-@Repository
 public interface ProductRepo extends CrudRepository<Product, Long> {
     @Query("FROM Product")
     List<Product> findAll();

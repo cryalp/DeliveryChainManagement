@@ -1,7 +1,7 @@
 package com.cry.DeliveryChain.Entity;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -25,8 +25,8 @@ public class Product {
     public Integer Id;
 
     @OneToOne
-    @JoinColumn(name = "SupplierId", referencedColumnName = "Id")
-    public Supplier Supplier;
+    @JoinColumn(name = "UserAccountId", referencedColumnName = "Id")
+    public UserAccount UserAccount;
 
     @Column(name = "Header")
     public String Header;
@@ -41,7 +41,7 @@ public class Product {
     public Integer Quantity;
 
     @Column(name = "AdditionDate")
-    public LocalDate AdditionDate;
+    public LocalDateTime AdditionDate;
 
     @Column(name = "Photo")
     public String Photo;
@@ -56,9 +56,9 @@ public class Product {
 
     public Product() {}
 
-    public Product(Supplier Supplier, String Header, String Description, BigDecimal Price, Integer Quantity, LocalDate AdditionDate, String Photo, Boolean IsActive,
-            UUID UniqueId) {
-        this.Supplier = Supplier;
+    public Product(UserAccount UserAccount, String Header, String Description, BigDecimal Price, Integer Quantity, LocalDateTime AdditionDate, String Photo,
+            Boolean IsActive, UUID UniqueId) {
+        this.UserAccount = UserAccount;
         this.Header = Header;
         this.Description = Description;
         this.Price = Price;

@@ -98,7 +98,7 @@ $(document).ready(() => {
         const description = row.children()[1].innerHTML;
         const price = row.children()[2].innerHTML;
         const quantity = row.children()[3].innerHTML;
-        const additionDate = row.children()[4].innerHTML;
+        const additionDate = new Date($(row.children()[4]).attr("data-additionDate")).toLocaleString("sv-SE", { timeZone: "Europe/Istanbul" }).replace(' ', 'T');
         const photo = row.children()[5].children[0].src;
         const isActive = row.children()[6].children[0].checked;
 

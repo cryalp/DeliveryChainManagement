@@ -1,32 +1,34 @@
 package com.cry.DeliveryChain.Controller;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.UUID;
-
 import javax.servlet.http.HttpSession;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import com.cry.DeliveryChain.Core.Functions;
 import com.cry.DeliveryChain.Entity.Product;
 import com.cry.DeliveryChain.Repository.ProductRepo;
-import com.cry.DeliveryChain.Repository.SupplierRepo;
+import com.cry.DeliveryChain.Repository.UserAccountRepo;
 
 @Controller
 @RequestMapping(value = "/")
 public class ProductController {
     ProductRepo productRepo;
-    SupplierRepo supplierRepo;
-    LoginController loginController = new LoginController();
+    UserAccountRepo userAccountRepo;
+    LoginController loginController;
+    Functions _functions;
 
-    public ProductController(ProductRepo productRepo, SupplierRepo supplierRepo) {
-        this.productRepo = productRepo;
-        this.supplierRepo = supplierRepo;
+    public ProductController(ProductRepo ProductRepo, UserAccountRepo UserAccountRepo, LoginController LoginController, Functions Functions) {
+        this.productRepo = ProductRepo;
+        this.userAccountRepo = UserAccountRepo;
+        this.loginController = LoginController;
+        this._functions = Functions;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -43,15 +45,14 @@ public class ProductController {
             return "Product/Index";
         }
         catch (Exception e) {
-            System.err.println(e.toString());
+            _functions.Logger(e.getMessage());
             return "redirect:/Login/";
         }
     }
 
     @RequestMapping(value = "/Add", method = RequestMethod.POST)
     @ResponseBody
-    public String Add(HttpSession httpSession, String SupplierName, String Header, String Description, String Price, String Quantity, String AdditionDate,
-            MultipartFile Photo, String UniqueId) {
+    public String Add(HttpSession httpSession, String Header, String Description, String Price, String Quantity, String AdditionDate, MultipartFile Photo) {
         try {
             if (!loginController.IsLoggedIn(httpSession)) {
                 return "NotLoggedIn";
@@ -63,18 +64,18 @@ public class ProductController {
                 photoBase64 = "data:" + Photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(Photo.getBytes()));
             }
 
-            var supplier = supplierRepo.findByName(SupplierName);
-            System.out.println(supplier.Username);
+            var userAccount = userAccountRepo.findByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            
-            var product = new Product(supplier, Header, Description, new BigDecimal(Price), Integer.parseInt(Quantity), LocalDate.parse(AdditionDate), photoBase64, true,
+            var currentAdditionDate = LocalDateTime.now().isBefore(LocalDateTime.parse(AdditionDate)) ? LocalDateTime.now() : LocalDateTime.parse(AdditionDate);
+
+            var product = new Product(userAccount, Header, Description, new BigDecimal(Price), Integer.parseInt(Quantity), currentAdditionDate, photoBase64, true,
                     UUID.randomUUID());
             productRepo.save(product);
 
             return product.UniqueId.toString();
         }
         catch (Exception e) {
-            System.err.println(e.toString());
+            _functions.Logger(e.getMessage());
             return "Error";
         }
     }
@@ -97,7 +98,7 @@ public class ProductController {
             product.Description = Description;
             product.Price = new BigDecimal(Price);
             product.Quantity = Integer.parseInt(Quantity);
-            product.AdditionDate = LocalDate.parse(AdditionDate);
+            product.AdditionDate = LocalDateTime.parse(AdditionDate);
             product.Photo = "data:" + Photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(Photo.getBytes()));
             product.IsActive = Boolean.parseBoolean(IsActive);
 
@@ -105,7 +106,7 @@ public class ProductController {
             return true;
         }
         catch (Exception e) {
-            System.err.println(e.toString());
+            _functions.Logger(e.getMessage());
             return false;
         }
     }
@@ -126,7 +127,7 @@ public class ProductController {
             return false;
         }
         catch (Exception e) {
-            System.err.println(e.toString());
+            _functions.Logger(e.getMessage());
             return false;
         }
     }

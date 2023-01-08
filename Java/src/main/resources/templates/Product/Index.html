@@ -38,7 +38,8 @@
                             <td th:text="${product.Description}"></td>
                             <td th:text="${product.Price}"></td>
                             <td th:text="${product.Quantity}"></td>
-                            <td th:text="${product.AdditionDate}"></td>
+                            <td th:text="${#temporals.format(product.AdditionDate, 'dd-MM-yyyy hh:mm')}" 
+                            th:attr="data-additionDate=${#temporals.format(product.AdditionDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
                             <td>
                                 <img th:src="${product.Photo}" th:alt="${product.Header}" src="#" alt="#" width="30px" />
                             </td>
