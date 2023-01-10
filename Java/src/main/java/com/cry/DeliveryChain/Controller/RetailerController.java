@@ -1,11 +1,11 @@
 package com.cry.DeliveryChain.Controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.cry.DeliveryChain.Core.Functions;
 import com.cry.DeliveryChain.Entity.Bill;
+import com.cry.DeliveryChain.Entity.BillProduct;
 import com.cry.DeliveryChain.Entity.Product;
+import com.cry.DeliveryChain.Repository.BillProductRepo;
 import com.cry.DeliveryChain.Repository.BillRepo;
 import com.cry.DeliveryChain.Repository.ProductRepo;
 import com.cry.DeliveryChain.Repository.UserAccountRepo;
@@ -25,13 +27,16 @@ import com.cry.DeliveryChain.Repository.UserAccountRepo;
 public class RetailerController {
     ProductRepo productRepo;
     BillRepo billRepo;
+    BillProductRepo billProductRepo;
     UserAccountRepo userAccountRepo;
     LoginController loginController;
     Functions _functions;
 
-    public RetailerController(ProductRepo ProductRepo, BillRepo BillRepo, UserAccountRepo UserAccountRepo, LoginController LoginController, Functions Functions) {
+    public RetailerController(ProductRepo ProductRepo, BillRepo BillRepo, BillProductRepo BillProductRepo, UserAccountRepo UserAccountRepo,
+            LoginController LoginController, Functions Functions) {
         this.productRepo = ProductRepo;
         this.billRepo = BillRepo;
+        this.billProductRepo = BillProductRepo;
         this.userAccountRepo = UserAccountRepo;
         this.loginController = LoginController;
         this._functions = Functions;
@@ -74,23 +79,26 @@ public class RetailerController {
 
             var productList = new ArrayList<Product>();
             cartProductList.forEach(cartProduct -> {
-                var product = productRepo.findByUniqueId(UUID.fromString(new JSONObject(cartProduct).getString("UniqueId")));
+                var jsonCartProduct = (JSONObject) cartProduct;
+                var product = productRepo.findByUniqueId(UUID.fromString(jsonCartProduct.getString("UniqueId")));
                 if (product.IsActive) {
+                    product.Quantity = jsonCartProduct.getInt("Quantity");
                     productList.add(product);
                 }
             });
 
-            model.addAttribute("ProductList", productList);
+            model.addAttribute("title", "Sepet - Satın Al");
+            model.addAttribute("productList", productList);
 
-            return "/Retailer/Checkout";
+            return "/Retailer/CheckOut";
         }
         catch (Exception e) {
             _functions.Logger(e.getMessage());
-            return "redirect:/Login/";
+            return "redirect:/";
         }
     }
 
-    @RequestMapping(value = "Retailer/CheckOut", method = RequestMethod.POST)
+    @RequestMapping(value = "Retailer/CheckOutPOST", method = RequestMethod.POST)
     @ResponseBody
     public String RetailerCheckOutPOST(HttpSession httpSession, HttpServletRequest httpRequest) {
         try {
@@ -98,17 +106,24 @@ public class RetailerController {
                 return "redirect:/Login/";
             }
 
-            UUID productUniqueId = UUID.fromString(httpRequest.getParameter("UniqueId"));
-            int productQuantity = Integer.parseInt(httpRequest.getParameter("Quantity"));
-
-            var product = productRepo.findByUniqueId(productUniqueId);
-            var currentPrice = product.Price;
-
-            var supplierUserAccount = userAccountRepo.findById(product.UserAccount.Id);
-
             var buyerUserAccount = userAccountRepo.findByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var bill = new Bill(supplierUserAccount, buyerUserAccount, product, productQuantity, currentPrice, LocalDateTime.now(), product.UniqueId);
+            var cartProductList = new JSONArray(httpRequest.getParameter("CartProductList"));
+
+            var bill = new Bill(buyerUserAccount, BigDecimal.valueOf(0), LocalDateTime.now(), UUID.randomUUID());
+            billRepo.save(bill);
+
+            cartProductList.forEach(cartProduct -> {
+                var jsonCartProduct = (JSONObject) cartProduct;
+                var product = productRepo.findByUniqueId(UUID.fromString(jsonCartProduct.getString("UniqueId")));
+                if (product.IsActive) {
+                    product.Quantity = jsonCartProduct.getInt("Quantity");
+                    var billProduct = new BillProduct(bill, product, product.Quantity, product.Price);
+                    bill.TotalPrice = bill.TotalPrice.add(product.Price.multiply(BigDecimal.valueOf(product.Quantity)));
+                    billProductRepo.save(billProduct);
+                }
+            });
+
             billRepo.save(bill);
 
             return bill.UniqueId.toString();

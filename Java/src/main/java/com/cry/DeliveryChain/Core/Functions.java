@@ -16,10 +16,10 @@ public class Functions {
 
     public Functions() {}
 
-    public void Logger(String message) {
+    public void Logger(Object message) {
         try {
             System.out.println("--**--" + Thread.currentThread().getStackTrace()[2].getClassName() + "." + Thread.currentThread().getStackTrace()[2].getMethodName());
-            System.out.println(message);
+            System.out.println(message.toString());
             System.out.println("--**--" + Thread.currentThread().getStackTrace()[2].getClassName() + "." + Thread.currentThread().getStackTrace()[2].getMethodName());
         }
         catch (Exception e) {

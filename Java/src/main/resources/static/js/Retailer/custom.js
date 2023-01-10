@@ -46,11 +46,7 @@ $(document).ready(() => {
 
     let cartList = JSON.parse(sessionStorage.getItem('CartList'))
     $('#buyProductSubmit').on("click", () => {
-        const postedFormData = new FormData();
-        postedFormData.append("UniqueId", uniqueId)
-        postedFormData.append("Quantity", $('#buyQuantity').val())
-
-        const cartItem = { "UniqueId": uniqueId, "Quantity": parseInt($('#buyQuantity').val()) }
+        const cartItem = { "UniqueId": uniqueId, "Quantity": parseInt($('#buyQuantity').val()) };
 
         cartList = cartList === null ? [] : JSON.parse(sessionStorage.getItem('CartList'));
 
@@ -58,19 +54,29 @@ $(document).ready(() => {
             cartList.forEach(item => {
                 if (item.UniqueId === uniqueId) {
                     item.Quantity = parseInt(item.Quantity) + 1;
-                    sessionStorage.setItem('CartList', JSON.stringify(cartList))
+                    sessionStorage.setItem('CartList', JSON.stringify(cartList));
                 }
             });
         } else {
             cartList.push(cartItem);
-            sessionStorage.setItem('CartList', JSON.stringify(cartList))
+            sessionStorage.setItem('CartList', JSON.stringify(cartList));
         }
-        console.log(cartList)
-        console.log(sessionStorage)
-        return;
+
+        $('#buyProductModal').modal('hide');
+        const alertModal = $('#alertSuccessModal');
+        alertModal.modal('show');
+    });
+
+    $('#checkOut').on("click", () => {
+        window.location.replace("/Retailer/CheckOut?CartProductList=" + encodeURIComponent(sessionStorage.getItem('CartList')));
+    });
+
+    $('#checkOutPOST').on("click", () => {
+        const postedFormData = new FormData();
+        postedFormData.append("CartProductList", sessionStorage.getItem('CartList'));
 
         $.ajax({
-            url: '/Retailer/Buy',
+            url: '/Retailer/CheckOutPOST',
             type: 'POST',
             data: postedFormData,
             processData: false,
@@ -80,8 +86,9 @@ $(document).ready(() => {
                 if (response.length === 36) {
                     const alertModal = $('#alertSuccessModal');
                     alertModal.modal('show');
+                    sessionStorage.clear();
                     setTimeout(() => {
-                        alertModal.modal('hide')
+                        alertModal.modal('hide');
                     }, 1500);
                 } else {
                     $('#alertFailModal').modal('show');

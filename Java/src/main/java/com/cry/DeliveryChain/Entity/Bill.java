@@ -3,7 +3,6 @@ package com.cry.DeliveryChain.Entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -25,22 +23,11 @@ public class Bill {
     public Integer Id;
 
     @OneToOne
-    @JoinColumn(name = "SupplierId", referencedColumnName = "Id")
-    public UserAccount Supplier;
-
-    @OneToOne
     @JoinColumn(name = "BuyerId", referencedColumnName = "Id")
     public UserAccount Buyer;
 
-    @OneToOne
-    @JoinColumn(name = "ProductId", referencedColumnName = "Id")
-    public Product Product;
-
-    @Column(name = "Quantity")
-    public Integer Quantity;
-
-    @Column(name = "CurrentPrice")
-    public BigDecimal CurrentPrice;
+    @Column(name = "TotalPrice")
+    public BigDecimal TotalPrice;
 
     @Column(name = "CreationDate")
     public LocalDateTime CreationDate;
@@ -52,12 +39,9 @@ public class Bill {
 
     public Bill() {}
 
-    public Bill(UserAccount Supplier, UserAccount Buyer, Product Product, Integer Quantity, BigDecimal CurrentPrice, LocalDateTime CreationDate, UUID UniqueId) {
-        this.Supplier = Supplier;
+    public Bill(UserAccount Buyer, BigDecimal TotalPrice, LocalDateTime CreationDate, UUID UniqueId) {
         this.Buyer = Buyer;
-        this.Product = Product;
-        this.Quantity = Quantity;
-        this.CurrentPrice = CurrentPrice;
+        this.TotalPrice = TotalPrice;
         this.CreationDate = CreationDate;
         this.UniqueId = UniqueId;
     }

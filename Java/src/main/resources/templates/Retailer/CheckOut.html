@@ -10,7 +10,7 @@
         <div class="row">
             <main id="main" class="transition-500 col-md-12">
                 <div class="float-end mb-2">
-                    <a id="checkOut" type="button" class="btn btn-warning">Sepete Git</a>
+                    <a id="checkOutPOST" type="button" class="btn btn-warning">Ödeme Yap</a>
                 </div>
                 <table id="productTable" class="table table-striped table-hover w-100">
                     <thead>
@@ -18,9 +18,9 @@
                             <th>Başlık</th>
                             <th>Açıklama</th>
                             <th>Fiyat</th>
+                            <th>Adet</th>
                             <th>Eklenme Tarihi</th>
                             <th>Fotoğraf</th>
-                            <th>Satın Al</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,15 +36,11 @@
                             <td th:text="${product.Header}"></td>
                             <td th:text="${product.Description}"></td>
                             <td th:text="${product.Price}"></td>
+                            <td th:text="${product.Quantity}"></td>
                             <td th:text="${#temporals.format(product.AdditionDate, 'dd-MM-yyyy hh:mm')}"
                                 th:attr="data-additionDate=${#temporals.format(product.AdditionDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
                             <td>
                                 <img th:src="${product.Photo}" th:alt="${product.Header}" src="#" alt="#" width="30px" />
-                            </td>
-                            <td>
-                                <a href="#buyProductModal" class="edit" data-toggle="modal" data-name="productBuy" th:td-uniqueId="${product.UniqueId}">
-                                    <i class="material-icons" data-toggle="tooltip" title="Satın Al">add_shopping_cart</i>
-                                </a>
                             </td>
                         </tr>
                     </tbody>
