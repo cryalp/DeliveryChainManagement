@@ -1,0 +1,85 @@
+<ModalsLayout xmlns:th="http://www.w3.org/1999/xhtml">
+    <!-- Edit Modal HTML -->
+    <div id="buyProductModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ürünü Satın Al</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="buyProductForm">
+                        <div class="input-group mb-3">
+                            <label for="buyHeader" class="col-md-2 col-form-label">Başlık:</label>
+                            <div class="col-md-10">
+                                <p id="buyHeader" name="Header" type="text" class="form-control"></p>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="buyDescription" class="col-md-2 col-form-label">Açıklama:</label>
+                            <div class="col-md-10">
+                                <p id="buyDescription" name="Description" type="text" class="form-control" required></p>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="buyQuantity" class="col-md-2 col-form-label">Miktar:</label>
+                            <div class="col-md-10">
+                                <input id="buyQuantity" name="Quantity" type="number" min="1" step="1" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="buyAdditionDate" class="col-md-2 col-form-label">Eklenme Tarih:</label>
+                            <div class="col-md-10">
+                                <p id="buyAdditionDate" name="AdditionDate" type="datetime-local" class="form-control"></p>
+                            </div>
+                        </div>
+                        <div class="input-group mb-3">
+                            <label for="buyPhotoImg" class="col-md-2 col-form-label">Fotoğraflar</label>
+                            <div class="col-md-3">
+                                <img id="buyPhotoImg" src="#" alt="#" class="form-control" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                    <button id="buyProductSubmit" type="button" class="btn btn-primary">Sepete Ekle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Alert Success Modal -->
+    <div id="alertSuccessModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">ÜrünMatik</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                    <p>İşlem başarıyla gerçekleştirildi.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Alert Fail Modal -->
+    <div id="alertFailModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ürün</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true"></button>
+                </div>
+                <div class="modal-body">
+                    <p>İşlem gerçekleştirilemedi. Lütfen tekrar deneyiniz.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ModalsLayout>

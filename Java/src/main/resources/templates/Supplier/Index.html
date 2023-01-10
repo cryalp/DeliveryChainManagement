@@ -38,8 +38,8 @@
                             <td th:text="${product.Description}"></td>
                             <td th:text="${product.Price}"></td>
                             <td th:text="${product.Quantity}"></td>
-                            <td th:text="${#temporals.format(product.AdditionDate, 'dd-MM-yyyy hh:mm')}" 
-                            th:attr="data-additionDate=${#temporals.format(product.AdditionDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
+                            <td th:text="${#temporals.format(product.AdditionDate, 'dd-MM-yyyy hh:mm')}"
+                                th:attr="data-additionDate=${#temporals.format(product.AdditionDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
                             <td>
                                 <img th:src="${product.Photo}" th:alt="${product.Header}" src="#" alt="#" width="30px" />
                             </td>
@@ -58,13 +58,13 @@
                     </tbody>
                 </table>
             </main>
-            <div th:replace="./Product/_Sidebar :: SidebarLayout"></div>
+            <div th:replace="./Supplier/_Sidebar :: SidebarLayout"></div>
         </div>
-        <div th:replace="./Product/_Modals :: ModalsLayout"></div>
+        <div th:replace="./Supplier/_Modals :: ModalsLayout"></div>
     </section>
 </body>
 <div layout:fragment="contentScripts">
-    <script th:src="@{/js/Product/custom.js}" type="text/javascript"></script>
+    <script th:src="@{/js/Supplier/custom.js}" type="text/javascript"></script>
 </div>
 
 </html>

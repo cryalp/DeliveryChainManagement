@@ -38,14 +38,14 @@ public class LoginController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String Index(HttpSession HttpSession, Model Model, String Notification) {
+    public String Index(HttpSession httpSession, Model model, String Notification) {
         try {
             if (Notification != null && Notification.length() > 64) {
                 Notification = Notification.substring(0, 64);
             }
-            Model.addAttribute("Notification", Notification);
+            model.addAttribute("Notification", Notification);
 
-            return IsLoggedIn(HttpSession) ? "redirect:/" : "Login/Index";
+            return IsLoggedIn(httpSession) ? "redirect:/" : "Login/Index";
         }
         catch (Exception e) {
             _functions.Logger(e.getMessage());
@@ -54,7 +54,7 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/Save", method = RequestMethod.POST)
-    public String Save(HttpSession HttpSession, RedirectAttributes redirectAttributes, String Username, String Password) {
+    public String Save(HttpSession httpSession, RedirectAttributes redirectAttributes, String Username, String Password) {
         try {
             var userAccount = userAccountRepo.findByUsername(Username);
             if (userAccount == null || !BCrypt.checkpw(Password, userAccount.Password) || !userAccount.IsActive) {
@@ -62,7 +62,7 @@ public class LoginController {
                 return "redirect:/Login";
             }
 
-            HttpSession.setAttribute("LOGIN_UniqueId", userAccount.UniqueId);
+            httpSession.setAttribute("LOGIN_UniqueId", userAccount.UniqueId);
             return "redirect:/";
         }
         catch (Exception e) {
@@ -72,9 +72,9 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/Logout", method = RequestMethod.GET)
-    public String Logout(HttpSession HttpSession) {
+    public String Logout(HttpSession httpSession) {
         try {
-            HttpSession.invalidate();
+            httpSession.invalidate();
             return "redirect:/Login/";
         }
         catch (Exception e) {
@@ -84,13 +84,13 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/Register", method = RequestMethod.GET)
-    public String Register(Model Model, String Notification) {
+    public String Register(Model model, String Notification) {
         try {
             if (Notification != null && Notification.length() > 64) {
                 Notification = Notification.substring(0, 64);
             }
 
-            Model.addAttribute("Notification", Notification);
+            model.addAttribute("Notification", Notification);
             return "/Login/Register/Index";
         }
         catch (Exception e) {
@@ -165,17 +165,17 @@ public class LoginController {
         }
     }
 
-    public UUID GetSessionUserUniqueId(HttpSession Session) {
-        return UUID.fromString(Session.getAttribute("LOGIN_UniqueId").toString());
+    public UUID GetSessionUserUniqueId(HttpSession httpSession) {
+        return UUID.fromString(httpSession.getAttribute("LOGIN_UniqueId").toString());
     }
 
-    public Boolean IsLoggedIn(HttpSession Session) {
+    public Boolean IsLoggedIn(HttpSession httpSession) {
         try {
-            if (Session.getAttribute("LOGIN_UniqueId") == null) {
+            if (httpSession.getAttribute("LOGIN_UniqueId") == null) {
                 return false;
             }
 
-            var userAccountUniqueId = Session.getAttribute("LOGIN_UniqueId");
+            var userAccountUniqueId = httpSession.getAttribute("LOGIN_UniqueId");
             var userAccount = userAccountRepo.findByUniqueId(UUID.fromString(userAccountUniqueId.toString()));
             if (!userAccount.IsActive) {
                 return false;

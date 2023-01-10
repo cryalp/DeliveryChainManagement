@@ -49,7 +49,7 @@ $(document).ready(() => {
         formData.append("IsActive", $('#addIsActive').prop("checked"))
 
         $.ajax({
-            url: '/Add',
+            url: 'Supplier/Add',
             type: 'POST',
             data: formData,
             processData: false,
@@ -83,7 +83,6 @@ $(document).ready(() => {
             };
             reader.readAsDataURL(element.currentTarget.files[0]);
         }
-        ///fileToDataURL(element);
     });
 
     $('#editPhotoImg').on("click", () => {
@@ -136,7 +135,7 @@ $(document).ready(() => {
         const newPhoto = photoDataURL;
 
         $.ajax({
-            url: '/Edit',
+            url: 'Supplier/Edit',
             type: 'POST',
             data: postedFormData,
             processData: false,
@@ -157,7 +156,6 @@ $(document).ready(() => {
                     row.children()[3].innerHTML = newQuantity
                     row.children()[4].innerHTML = newAdditionDate
                     row.children()[5].children[0].src = newPhoto
-                    console.log(row.children()[6].children[0])
                     row.children()[6].children[0].checked = newIsActive
                 } else {
                     $('#alertFailModal').modal('show');
@@ -217,13 +215,4 @@ const dataURLtoFile = (dataUrl, filename) => {
         u8arr[n] = bstr.charCodeAt(n);
     }
     return new File([u8arr], filename, { type: mime });
-}
-
-const fileToDataURL = (element) => {
-    let file = element.target.files[0];
-    let reader = new FileReader();
-    reader.onloadend = () => {
-        console.log(reader.result)
-    }
-    reader.readAsDataURL(file);
 }

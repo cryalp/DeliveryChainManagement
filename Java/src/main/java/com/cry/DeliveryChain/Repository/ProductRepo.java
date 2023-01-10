@@ -12,6 +12,12 @@ public interface ProductRepo extends CrudRepository<Product, Long> {
     @Query("FROM Product")
     List<Product> findAll();
 
+    @Query("FROM Product WHERE UserAccountId = :UserAccountId")
+    List<Product> findAllByUserAccountId(int UserAccountId);
+
+    @Query("FROM Product WHERE IsActive = :IsActive")
+    List<Product> findAllByIsActive(Boolean IsActive);
+
     @Query("FROM Product WHERE Header = :Header")
     Product findByHeader(String Header);
 

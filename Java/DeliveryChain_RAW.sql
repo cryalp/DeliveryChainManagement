@@ -10,7 +10,7 @@ CREATE TABLE UserAccount
     Username     NVARCHAR(255)    NOT NULL,
     Password     NVARCHAR(255)    NOT NULL,
     AccountType  NVARCHAR(255)    NOT NULL,
-    CreationDate DATETIME             NOT NULL,
+    CreationDate DATETIME         NOT NULL,
     Photo        NVARCHAR(MAX),
     IsActive     BIT              NOT NULL,
     UniqueId     UNIQUEIDENTIFIER NOT NULL,
@@ -43,4 +43,23 @@ INSERT INTO Product
     (UserAccountId, Header, Description, Price, Quantity, AdditionDate, Photo, IsActive, UniqueId)
 VALUES
     (1, 'Test Ürünü', 'test açıklama', '1', 1, '2023-01-07 01:07:01', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADbUlEQVRYhe2VUWhbZRTHf+c2XSUxsWt6k9skrYU9zFmsPhTclCH4tD4IDpxDkcnwRXD45pMgKiL6JnsU8UHfHMOBWDaGMGG+OBC0rA5EiduNzb2pbeySNU1zv+NDkxmTrLnB+iDu/3Tvd/73f/7fuec7H9zF/x0yCNm2s4+IJZeAQJFvRPUaltZQcVAeQHhY0YWSV3juXzGQSuUWEOabr5ugyyBVYBTItonOep67GEbTCpvccaanEY60LY2AFIFKe3IAVV4IqxvagDGNE3RX7CDwaA/682G1QxtoioaDkLMnJh/fNQMTE/cfQNgf2gBgmdu9shOGIqnU5NMimhwe5nPXdVd7sYLAzA/WrqCYuTslte2pQyLmKbX4OuL7N87ZTvaZ+pZcTTm570X1vDFcKpUKPwAGQMQYRerAnvAW5KHmg+U4UweMCQ4jchg4gphfRXnRL7qLt/eVyWTGg8B6X+EkIAJrBrkMLIrqjyK6bETmRDkEPAbY/T1wHuUg28cU4A9U3vb9G6eBxjalA44z9WCgwRuCHKN3jxhgtRkbC1ULWFPhdL0W+aBczpc7Yr0xls3mIlvWSUTngVkgFiZZm8lbwFeono1Gh8/k8/naHcz1h53OfWQhFxXzHsheIE7v6mwCqwJnDRQsrM887/ovO2lHwhgQkS0T1L5U1YWVlZWbzeWh0dHpeItTLucrQCOTyUSBqNmy5lR0FvhnBtLpdEwxVbFGfhJwUulcA6iC1qBRBCmBzqTSuShwTyNgBABLXkI02U+/7yDyPG8TLFtoCm+bjgOo6DuWmHdR1oH7+ItjRPRZjF7upz/UjwCYvaOJC0FAAqHWTBIHiQsyoyIO8GQbv4ryrbGC10reb1f6iYcaxa7rbmCxD3iC7Zuv9d0M2jWiYwije0Suh9EOfRmpsgZcBeodoX1dZKHQCKzldHry+K4ZKHnuy8DvdI/j7kYzfAhEFH111wwAAcJ3IXhLqpsXgarAx7tpgPGxxOsIF3ag1E2gR0ulUgXVM8lk4tN+mgNespBM5rJDEa4B93YFlTd9330LwHEcu1gslvrphTmGf8PGxvrNWCxeQORoR+ic77unAAWoVCq3wugN9Ata8P3CJ4i80kqmyBfjycRxIBhUa+AKtFCtrF+JxRI/Ixqxk4ljS0tLncfzLv4b+BP4mzL9+mAIZwAAAABJRU5ErkJggg==', 1, '5B6C6E1E-E0A0-48BF-AC48-1E7E88CCA975')
+GO
+
+CREATE TABLE Bill
+(
+    Id           INT              PRIMARY KEY IDENTITY(1,1),
+    SupplierId   INT              FOREIGN KEY REFERENCES UserAccount(Id) NOT NULL,
+    BuyerId      INT              FOREIGN KEY REFERENCES UserAccount(Id) NOT NULL,
+    ProductId    INT              FOREIGN KEY REFERENCES Product (Id) NOT NULL,
+    Quantity     INT              NOT NULL,
+    CurrentPrice MONEY            NOT NULL,
+    CreationDate DATETIME         NOT NULL,
+    UniqueId     UNIQUEIDENTIFIER NOT NULL
+)
+GO
+
+INSERT INTO Bill
+    (SupplierId, BuyerId, ProductId,Quantity, CurrentPrice,CreationDate, UniqueId)
+VALUES
+    (1, 1, 1, 1, 2, '2023-01-09 03:12:12', 'B515E9D0-0BAB-4E77-AF87-BFB329ADCEC1')
 GO
