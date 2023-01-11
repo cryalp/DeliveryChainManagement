@@ -121,7 +121,7 @@ public class RESTService {
 
     @RequestMapping(value = "/FindAllProductsByIsActiveAndQuantity", method = RequestMethod.GET)
     @ResponseBody
-    public List<Product> FindAllProductsByIsActiveAndQuantity(Boolean isActive, Integer quantity) {
+     public List<Product> FindAllProductsByIsActiveAndQuantity(Boolean isActive, Integer quantity) {
         try {
             return productRepo.findAllByIsActiveAndQuantity(isActive, quantity);
         }
@@ -148,15 +148,15 @@ public class RESTService {
         }
     }
 
-    @RequestMapping(value = "/FindCartByBuyerUniqueIdAndProductId", method = RequestMethod.GET)
+    @RequestMapping(value = "/FindCartByBuyerUniqueIdAndProductUniqueId", method = RequestMethod.GET)
     @ResponseBody
-    public Cart FindCartByBuyerUniqueIdAndProductId(HttpSession httpSession, String buyerUniqueId, Integer productId) {
+    public Cart FindCartByBuyerUniqueIdAndProductUniqueId(HttpSession httpSession, String buyerUniqueId, String productUniqueId) {
         try {
             if (!loginController.IsLoggedIn(httpSession)) {
                 return new Cart();
             }
 
-            return cartRepo.findByBuyerUniqueIdAndProductId(UUID.fromString(buyerUniqueId), productId);
+            return cartRepo.findByBuyerUniqueIdAndProductUniqueId(UUID.fromString(buyerUniqueId), UUID.fromString(productUniqueId));
         }
         catch (Exception e) {
             return new Cart();

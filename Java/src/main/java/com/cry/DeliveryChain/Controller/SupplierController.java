@@ -14,7 +14,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.cry.DeliveryChain.Core.Functions;
 import com.cry.DeliveryChain.Entity.BillProduct;
 import com.cry.DeliveryChain.Entity.Product;
@@ -59,21 +59,28 @@ public class SupplierController {
 
     @RequestMapping(value = "/Add", method = RequestMethod.POST)
     @ResponseBody
-    public String Add(HttpSession httpSession, String Header, String Description, String Price, String Quantity, String AdditionDate, MultipartFile Photo) {
+    public String Add(HttpSession httpSession, HttpServletRequest httpRequest) {
         try {
             if (!loginController.IsLoggedIn(httpSession)) {
                 return "NotLoggedIn";
             }
 
-            if (Photo != null) {
-                productBase64Photo = "data:" + Photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(Photo.getBytes()));
+            var header = httpRequest.getParameter("Header");
+            var description = httpRequest.getParameter("Description");
+            var price = httpRequest.getParameter("Price");
+            var quantity = httpRequest.getParameter("Quantity");
+            var additionDate = httpRequest.getParameter("AdditionDate");
+            var photo = ((MultipartHttpServletRequest) httpRequest).getFile("Photo");
+
+            if (photo != null) {
+                productBase64Photo = "data:" + photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(photo.getBytes()));
             }
 
             var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var currentAdditionDate = LocalDateTime.now().isBefore(LocalDateTime.parse(AdditionDate)) ? LocalDateTime.now() : LocalDateTime.parse(AdditionDate);
+            var currentAdditionDate = LocalDateTime.now().isBefore(LocalDateTime.parse(additionDate)) ? LocalDateTime.now() : LocalDateTime.parse(additionDate);
 
-            var product = new Product(userAccount, Header, Description, new BigDecimal(Price), Integer.parseInt(Quantity), currentAdditionDate, productBase64Photo, true,
+            var product = new Product(userAccount, header, description, new BigDecimal(price), Integer.parseInt(quantity), currentAdditionDate, productBase64Photo, true,
                     UUID.randomUUID());
             restService.SaveProduct(product);
 
@@ -87,25 +94,37 @@ public class SupplierController {
 
     @RequestMapping(value = "/Edit", method = RequestMethod.POST)
     @ResponseBody
-    public Boolean Edit(HttpSession httpSession, String Header, String Description, String Price, String Quantity, String AdditionDate, MultipartFile Photo,
-            String IsActive, String UniqueId) {
+    public Boolean Edit(HttpSession httpSession, HttpServletRequest httpRequest) {
         try {
             if (!loginController.IsLoggedIn(httpSession)) {
                 return false;
             }
 
-            var product = restService.FindProductByUniqueId(UniqueId);
+            var header = httpRequest.getParameter("Header");
+            var description = httpRequest.getParameter("Description");
+            var price = httpRequest.getParameter("Price");
+            var quantity = httpRequest.getParameter("Quantity");
+            var additionDate = httpRequest.getParameter("AdditionDate");
+            var photo = ((MultipartHttpServletRequest) httpRequest).getFile("Photo");
+            var isActive = httpRequest.getParameter("IsActive");
+            var uniqueId = httpRequest.getParameter("UniqueId");
+
+            var product = restService.FindProductByUniqueId(uniqueId);
             if (product == null) {
                 return false;
             }
 
-            product.Header = Header;
-            product.Description = Description;
-            product.Price = new BigDecimal(Price);
-            product.Quantity = Integer.parseInt(Quantity);
-            product.AdditionDate = LocalDateTime.parse(AdditionDate);
-            product.Photo = "data:" + Photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(Photo.getBytes()));
-            product.IsActive = Boolean.parseBoolean(IsActive);
+            product.Header = header;
+            product.Description = description;
+            product.Price = new BigDecimal(price);
+            product.Quantity = Integer.parseInt(quantity);
+            product.AdditionDate = LocalDateTime.parse(additionDate);
+            if (photo != null) {
+                product.Photo = "data:" + photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(photo.getBytes()));
+            } else {
+                product.Photo = productBase64Photo;
+            }
+            product.IsActive = Boolean.parseBoolean(isActive);
 
             restService.SaveProduct(product);
 
@@ -119,13 +138,15 @@ public class SupplierController {
 
     @RequestMapping(value = "/Delete", method = RequestMethod.POST)
     @ResponseBody
-    public boolean Delete(HttpSession httpSession, String UniqueId) {
+    public boolean Delete(HttpSession httpSession, HttpServletRequest httpRequest) {
         try {
             if (!loginController.IsLoggedIn(httpSession)) {
                 return false;
             }
 
-            var product = restService.FindProductByUniqueId(UniqueId);
+            var uniqueId = httpRequest.getParameter("UniqueId");
+
+            var product = restService.FindProductByUniqueId(uniqueId);
             if (product != null) {
                 restService.DeleteProduct(product);
                 return true;
@@ -147,7 +168,7 @@ public class SupplierController {
 
             var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var billProductList = restService.FindAllBillProductsBySupplierUniqueId(httpSession, userAccount.Username);
+            var billProductList = restService.FindAllBillProductsBySupplierUniqueId(httpSession, userAccount.UniqueId.toString());
 
             MultiValueMap<String, BillProduct> billMapList = new LinkedMultiValueMap<String, BillProduct>();
             MultiValueMap<String, BillProduct> unApprovedBillMapList = new LinkedMultiValueMap<String, BillProduct>();
@@ -160,6 +181,7 @@ public class SupplierController {
             }
 
             model.addAttribute("title", "Sipariş Listele");
+            model.addAttribute("productBase64Photo", productBase64Photo);
             model.addAttribute("billMapList", billMapList);
             model.addAttribute("unApprovedBillMapList", unApprovedBillMapList);
 

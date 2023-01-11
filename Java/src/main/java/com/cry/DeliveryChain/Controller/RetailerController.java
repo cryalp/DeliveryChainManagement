@@ -71,11 +71,14 @@ public class RetailerController {
 
             var product = restService.FindProductByUniqueId(productUniqueId);
 
-            if (!product.IsActive || product.Quantity < productQuantity) {
-                return "Ürün aktif değil ya da stok aşıldı.";
+            if (!product.IsActive) {
+                return "Ürün aktif değil.";
+            }
+            if (product.Quantity < productQuantity) {
+                return "İstenilen stok mevcut değil.";
             }
 
-            var cart = restService.FindCartByBuyerUniqueIdAndProductId(httpSession, buyerUserAccount.UniqueId.toString(), product.Id);
+            var cart = restService.FindCartByBuyerUniqueIdAndProductUniqueId(httpSession, buyerUserAccount.UniqueId.toString(), product.UniqueId.toString());
             if (cart == null) {
                 cart = new Cart(buyerUserAccount, product, productQuantity, UUID.randomUUID());
                 restService.SaveCart(cart);
@@ -161,7 +164,7 @@ public class RetailerController {
             model.addAttribute("inActiveProductList", inActiveProductList);
             model.addAttribute("cartTotalPrice", cartTotalPriceObject.totalPrice);
 
-            return "/Retailer/CheckOut";
+            return "Retailer/CheckOut";
         }
         catch (Exception e) {
             _functions.Logger(e.getMessage());
@@ -242,7 +245,7 @@ public class RetailerController {
             model.addAttribute("billProductList", billProductList);
             model.addAttribute("unApprovedBillProductList", unApprovedBillProductList);
 
-            return "/Retailer/Orders";
+            return "Retailer/Orders";
         }
         catch (Exception e) {
             _functions.Logger(e.getMessage());

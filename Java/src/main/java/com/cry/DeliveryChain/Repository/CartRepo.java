@@ -19,8 +19,8 @@ public interface CartRepo extends CrudRepository<Cart, Long> {
     @Query("FROM Cart WHERE BuyerId = :BuyerId AND ProductId = :ProductId")
     Cart findByBuyerIdAndProductId(Integer BuyerId, Integer ProductId);
 
-    @Query("FROM Cart WHERE BuyerId = (SELECT Id FROM UserAccount WHERE UniqueId = :BuyerUniqueId) AND ProductId = :ProductId")
-    Cart findByBuyerUniqueIdAndProductId(UUID BuyerUniqueId, Integer ProductId);
+    @Query("FROM Cart WHERE BuyerId = (SELECT Id FROM UserAccount WHERE UniqueId = :BuyerUniqueId) AND ProductId = (SELECT Id FROM Product WHERE UniqueId = :ProductUniqueId)")
+    Cart findByBuyerUniqueIdAndProductUniqueId(UUID BuyerUniqueId, UUID ProductUniqueId);
 
     @Query("FROM Cart WHERE UniqueId = :UniqueId")
     Cart findByUniqueId(UUID UniqueId);
