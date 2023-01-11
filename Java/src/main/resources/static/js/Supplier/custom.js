@@ -13,8 +13,16 @@ $(document).ready(() => {
         },
     });
 
-    $('#platformRedirect').on("click", () => {
-        window.location.replace("/Platform");
+    $('#productListRedirect').on("click", () => {
+        window.location.replace("/");
+    });
+
+    $('#orderRedirect').on("click", () => {
+        window.location.replace("/Supplier/Orders");
+    });
+
+    $('#productRedirect').on("click", () => {
+        window.location.replace("/Supplier");
     });
 
     $('#logout').on("click", () => {
@@ -90,7 +98,7 @@ $(document).ready(() => {
     });
 
     let uniqueId = null;
-    $('a[data-name ="productEdit"]').on("click", (e) => {
+    $('a[data-name="productEdit"]').on("click", (e) => {
         uniqueId = e.currentTarget.getAttribute("td-uniqueId");
         let row = $('#' + uniqueId);
         const header = row.children()[0].innerHTML;
@@ -168,17 +176,15 @@ $(document).ready(() => {
         });
     });
 
-    $('a[data-name ="productDelete"]').on("click", (e) => {
+    $('a[data-name="productDelete"]').on("click", (e) => {
         uniqueId = e.currentTarget.getAttribute("td-uniqueId");
     });
 
     $('#deleteProductSubmit').on("click", () => {
         $.ajax({
-            url: '/Delete',
+            url: 'Supplier/Delete',
             type: 'POST',
-            data: $.param({
-                UniqueId: uniqueId,
-            }),
+            data: $.param({ UniqueId: uniqueId }),
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             success: (response) => {
                 $('#deleteProductModal').modal('hide');
@@ -199,6 +205,31 @@ $(document).ready(() => {
             },
             error: () => {
                 $('#deleteProductModal').modal('hide');
+                $('#alertFailModal').modal('show');
+            }
+        });
+    });
+
+    $('a[data-name="orderApprove"]').on("click", (e) => {
+        let uniqueId = e.currentTarget.getAttribute("td-uniqueId");
+        $.ajax({
+            url: '/Supplier/OrderApprove',
+            type: 'POST',
+            data: $.param({ UniqueId: uniqueId }),
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: (response) => {
+                if (response.length === 36) {
+                    const alertModal = $('#alertSuccessModal');
+                    alertModal.modal('show');
+                    setTimeout(() => {
+                        alertModal.modal('hide')
+                    }, 1500);
+                    window.location.replace("/Supplier/Orders?Notification=Sipariş başarılı bir şekilde onaylandı.");
+                } else {
+                    $('#alertFailModal').modal('show');
+                }
+            },
+            error: () => {
                 $('#alertFailModal').modal('show');
             }
         });

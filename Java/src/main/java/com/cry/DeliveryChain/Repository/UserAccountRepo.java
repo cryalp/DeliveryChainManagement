@@ -11,7 +11,7 @@ public interface UserAccountRepo extends CrudRepository<UserAccount, Long> {
     List<UserAccount> findAll();
 
     @Query("FROM UserAccount WHERE Id = :Id")
-    UserAccount findById(int Id);
+    UserAccount findById(Integer Id);
 
     @Query("FROM UserAccount WHERE Username = :Username")
     UserAccount findByUsername(String Username);

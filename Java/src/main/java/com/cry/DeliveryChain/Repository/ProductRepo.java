@@ -13,10 +13,13 @@ public interface ProductRepo extends CrudRepository<Product, Long> {
     List<Product> findAll();
 
     @Query("FROM Product WHERE UserAccountId = :UserAccountId")
-    List<Product> findAllByUserAccountId(int UserAccountId);
+    List<Product> findAllByUserAccountId(Integer UserAccountId);
 
     @Query("FROM Product WHERE IsActive = :IsActive")
     List<Product> findAllByIsActive(Boolean IsActive);
+
+    @Query("FROM Product WHERE IsActive = :IsActive AND Quantity >= :Quantity")
+    List<Product> findAllByIsActiveAndQuantity(Boolean IsActive, Integer Quantity);
 
     @Query("FROM Product WHERE Header = :Header")
     Product findByHeader(String Header);

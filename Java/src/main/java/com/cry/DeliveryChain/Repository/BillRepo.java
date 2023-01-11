@@ -12,8 +12,11 @@ public interface BillRepo extends CrudRepository<Bill, Long> {
     @Query("FROM Bill")
     List<Bill> findAll();
 
-    @Query("FROM Bill WHERE UserAccountId = :UserAccountId")
-    List<Bill> findAllByBuyerId(int UserAccountId);
+    @Query("FROM Bill WHERE BuyerId = :BuyerId")
+    List<Bill> findAllByBuyerId(Integer BuyerId);
+
+    @Query("FROM Bill WHERE BuyerId = :BuyerId AND IsApproved = :IsApproved")
+    List<Bill> findAllByBuyerIdAndIsApproved(Integer BuyerId, Boolean IsApproved);
 
     @Query("FROM Bill WHERE UniqueId = :UniqueId")
     Bill findByUniqueId(UUID UniqueId);

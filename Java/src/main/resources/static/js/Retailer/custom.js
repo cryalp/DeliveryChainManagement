@@ -13,8 +13,16 @@ $(document).ready(() => {
         },
     });
 
+    $('#productListRedirect').on("click", () => {
+        window.location.replace("/");
+    });
+
+    $('#sideBarRedirectToCart').on("click", () => {
+        window.location.replace("/Retailer/CheckOut");
+    });
+
     $('#orderRedirect').on("click", () => {
-        window.location.replace("/Retailer/ListOrders");
+        window.location.replace("/Retailer/Orders");
     });
 
     $('#productRedirect').on("click", () => {
@@ -26,7 +34,7 @@ $(document).ready(() => {
     });
 
     let uniqueId = null;
-    $('a[data-name ="productBuy"]').on("click", (e) => {
+    $('a[data-name="productBuy"]').on("click", (e) => {
         uniqueId = e.currentTarget.getAttribute("td-uniqueId");
         let row = $('#' + uniqueId);
         const header = row.children()[0].innerHTML;
@@ -44,41 +52,15 @@ $(document).ready(() => {
         $('#buyPhotoImg').attr('src', photo);
     });
 
-    let cartList = JSON.parse(sessionStorage.getItem('CartList'))
     $('#buyProductSubmit').on("click", () => {
-        const cartItem = { "UniqueId": uniqueId, "Quantity": parseInt($('#buyQuantity').val()) };
-
-        cartList = cartList === null ? [] : JSON.parse(sessionStorage.getItem('CartList'));
-
-        if (cartList.some(item => item.UniqueId === uniqueId)) {
-            cartList.forEach(item => {
-                if (item.UniqueId === uniqueId) {
-                    item.Quantity = parseInt(item.Quantity) + 1;
-                    sessionStorage.setItem('CartList', JSON.stringify(cartList));
-                }
-            });
-        } else {
-            cartList.push(cartItem);
-            sessionStorage.setItem('CartList', JSON.stringify(cartList));
-        }
-
-        $('#buyProductModal').modal('hide');
-        const alertModal = $('#alertSuccessModal');
-        alertModal.modal('show');
-    });
-
-    $('#checkOut').on("click", () => {
-        window.location.replace("/Retailer/CheckOut?CartProductList=" + encodeURIComponent(sessionStorage.getItem('CartList')));
-    });
-
-    $('#checkOutPOST').on("click", () => {
-        const postedFormData = new FormData();
-        postedFormData.append("CartProductList", sessionStorage.getItem('CartList'));
+        const formData = new FormData();
+        formData.append("UniqueId", uniqueId);
+        formData.append("Quantity", parseInt($('#buyQuantity').val()));
 
         $.ajax({
-            url: '/Retailer/CheckOutPOST',
+            url: '/Retailer/AddToCart',
             type: 'POST',
-            data: postedFormData,
+            data: formData,
             processData: false,
             contentType: false,
             success: (response) => {
@@ -86,16 +68,84 @@ $(document).ready(() => {
                 if (response.length === 36) {
                     const alertModal = $('#alertSuccessModal');
                     alertModal.modal('show');
-                    sessionStorage.clear();
+                    window.location.replace("/?Notification=Sepete başarılı bir şekilde eklendi.");
                     setTimeout(() => {
                         alertModal.modal('hide');
                     }, 1500);
                 } else {
-                    $('#alertFailModal').modal('show');
+                    const alertModal = $('#alertFailModal');
+                    alertModal.modal('show');
+                    setTimeout(() => {
+                        alertModal.modal('hide');
+                    }, 1500);
+                    window.location.replace("/?Notification=" + response);
                 }
             },
             error: () => {
                 $('#buyProductModal').modal('hide');
+                $('#alertFailModal').modal('show');
+            }
+        });
+    });
+
+    $('#checkOut').on("click", () => {
+        window.location.replace("/Retailer/CheckOut");
+    });
+
+    $('#checkOutPOST').on("click", () => {
+        $.ajax({
+            url: '/Retailer/CheckOutPOST',
+            type: 'POST',
+            success: (response) => {
+                $('#buyProductModal').modal('hide');
+                if (response.length === 36) {
+                    const alertModal = $('#alertSuccessModal');
+                    alertModal.modal('show');
+                    sessionStorage.clear();
+                    window.location.replace("/?Notification=Ödeme başarılı bir şekilde tamamlandı.");
+                    setTimeout(() => {
+                        alertModal.modal('hide');
+                    }, 1500);
+                } else {
+                    const alertModal = $('#alertFailModal');
+                    alertModal.modal('show');
+                    setTimeout(() => {
+                        alertModal.modal('hide');
+                    }, 1500);
+                    window.location.replace("/Retailer/CheckOut?Notification=" + response);
+                }
+            },
+            error: () => {
+                $('#buyProductModal').modal('hide');
+                $('#alertFailModal').modal('show');
+            }
+        });
+    });
+
+    $('a[data-name="removeFromCart"]').on('click', (e) => {
+        $.ajax({
+            url: '/Retailer/RemoveFromCart',
+            type: 'POST',
+            data: $.param({ UniqueId: e.currentTarget.getAttribute("td-uniqueId"), }),
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: (response) => {
+                if (response.length === 36) {
+                    const alertModal = $('#alertSuccessModal');
+                    alertModal.modal('show');
+                    window.location.replace("/Retailer/CheckOut?Notification=Sepetten başarılı bir şekilde silindi.");
+                    setTimeout(() => {
+                        alertModal.modal('hide');
+                    }, 1500);
+                } else {
+                    const alertModal = $('#alertFailModal');
+                    alertModal.modal('show');
+                    setTimeout(() => {
+                        alertModal.modal('hide');
+                    }, 1500);
+                    window.location.replace("/Retailer/CheckOut?Notification=" + response);
+                }
+            },
+            error: () => {
                 $('#alertFailModal').modal('show');
             }
         });

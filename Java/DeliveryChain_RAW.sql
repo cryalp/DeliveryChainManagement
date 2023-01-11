@@ -55,22 +55,48 @@ CREATE TABLE Bill
     BuyerId      INT              FOREIGN KEY REFERENCES UserAccount(Id) NOT NULL,
     TotalPrice   MONEY            NOT NULL,
     CreationDate DATETIME         NOT NULL,
+    IsApproved   BIT              NOT NULL,
     UniqueId     UNIQUEIDENTIFIER NOT NULL
 )
 GO
 
 INSERT INTO Bill
-    (BuyerId, CreationDate, UniqueId)
+    (BuyerId, TotalPrice, CreationDate, IsApproved, UniqueId)
 VALUES
-    (1, 0, '2023-01-09 03:12:12', 'B515E9D0-0BAB-4E77-AF87-BFB329ADCEC1')
+    (1, 2, '2023-01-09 03:12:12', 1, 'B515E9D0-0BAB-4E77-AF87-BFB329ADCEC1')
 GO
 
 CREATE TABLE BillProduct
 (
     Id           INT   PRIMARY KEY IDENTITY(1,1),
-    BillId       INT   FOREIGN KEY REFERENCES Bill(Id),
-    ProductId    INT   FOREIGN KEY REFERENCES Product(Id),
+    SupplierId   INT   FOREIGN KEY REFERENCES UserAccount(Id) NOT NULL,
+    BillId       INT   FOREIGN KEY REFERENCES Bill(Id) NOT NULL,
+    ProductId    INT   FOREIGN KEY REFERENCES Product(Id) NOT NULL,
     Quantity     INT   NOT NULL,
     CurrentPrice MONEY NOT NULL,
 )
+GO
+
+INSERT INTO BillProduct
+    (SupplierId, BillId, ProductId, Quantity, CurrentPrice)
+VALUES
+    (1, 1, 1, 1, 2)
+GO
+
+DROP TABLE IF EXISTS Cart
+GO
+CREATE TABLE Cart
+(
+    Id        INT              PRIMARY KEY IDENTITY(1,1),
+    BuyerId   INT              FOREIGN KEY REFERENCES UserAccount(Id) NOT NULL,
+    ProductId INT              FOREIGN KEY REFERENCES Product(Id) NOT NULL,
+    Quantity  INT              NOT NULL,
+    UniqueId  UNIQUEIDENTIFIER NOT NULL
+)
+GO
+
+INSERT INTO Cart
+    (BuyerId, ProductId, Quantity, UniqueId)
+VALUES
+    (1, 1, 1, 'FE7C556E-595B-4E8E-80BD-83B6B6171B80')
 GO

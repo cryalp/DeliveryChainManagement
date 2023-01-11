@@ -32,6 +32,9 @@ public class Bill {
     @Column(name = "CreationDate")
     public LocalDateTime CreationDate;
 
+    @Column(name = "IsApproved")
+    public Boolean IsApproved;
+
     @Column(name = "UniqueId")
     @Type(type = "uuid-char")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -39,10 +42,11 @@ public class Bill {
 
     public Bill() {}
 
-    public Bill(UserAccount Buyer, BigDecimal TotalPrice, LocalDateTime CreationDate, UUID UniqueId) {
+    public Bill(UserAccount Buyer, BigDecimal TotalPrice, LocalDateTime CreationDate, Boolean IsApproved, UUID UniqueId) {
         this.Buyer = Buyer;
         this.TotalPrice = TotalPrice;
         this.CreationDate = CreationDate;
+        this.IsApproved = IsApproved;
         this.UniqueId = UniqueId;
     }
 }

@@ -9,6 +9,9 @@
     <section layout:fragment="content" class="content container-fluid my-md-4">
         <div class="row">
             <main id="main" class="transition-500 col-md-12">
+                <div th:if="${Notification} != null" class="text-center mb-2">
+                    <p th:text="${Notification}" class="text-warning fs-3"></a>
+                </div>
                 <div class="float-end mb-2">
                     <a id="checkOut" type="button" class="btn btn-warning">Sepete Git</a>
                 </div>
@@ -25,7 +28,7 @@
                     </thead>
                     <tbody>
                         <tr th:if="${productList.empty}">
-                            <td colspan="6">Ürün bulunamadı.</td>
+                            <td colspan="6" class="text-center">Ürün bulunamadı.</td>
                             <td class="d-none"></td>
                             <td class="d-none"></td>
                             <td class="d-none"></td>
@@ -35,7 +38,7 @@
                         <tr th:each="product : ${productList}" th:id="${product.UniqueId}">
                             <td th:text="${product.Header}"></td>
                             <td th:text="${product.Description}"></td>
-                            <td th:text="${product.Price}"></td>
+                            <td th:text="${#numbers.formatDecimal(product.Price, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
                             <td th:text="${#temporals.format(product.AdditionDate, 'dd-MM-yyyy hh:mm')}"
                                 th:attr="data-additionDate=${#temporals.format(product.AdditionDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
                             <td>
