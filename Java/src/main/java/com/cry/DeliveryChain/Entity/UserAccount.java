@@ -10,10 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name = "UserAccount")
 @Table(name = "UserAccount")
 public class UserAccount {
+    @JsonIgnore
     @Id
     @Column(name = "Id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,21 +27,27 @@ public class UserAccount {
     @Column(name = "Username")
     public String Username;
 
+    @JsonIgnore
     @Column(name = "Password")
     public String Password;
 
+    @JsonIgnore
     @Column(name = "AccountType")
     public String AccountType;
 
+    @JsonIgnore
     @Column(name = "CreationDate")
     public LocalDateTime CreationDate;
 
+    @JsonIgnore
     @Column(name = "Photo")
     public String Photo;
 
+    @JsonIgnore
     @Column(name = "IsActive")
     public Boolean IsActive;
 
+    @JsonIgnore
     @Column(name = "UniqueId")
     @Type(type = "uuid-char")
     @GenericGenerator(name = "uuid", strategy = "uuid2")

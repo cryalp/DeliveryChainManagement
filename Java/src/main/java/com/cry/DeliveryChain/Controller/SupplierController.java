@@ -18,30 +18,19 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cry.DeliveryChain.Core.Functions;
 import com.cry.DeliveryChain.Entity.BillProduct;
 import com.cry.DeliveryChain.Entity.Product;
-import com.cry.DeliveryChain.Repository.BillProductRepo;
-import com.cry.DeliveryChain.Repository.BillRepo;
-import com.cry.DeliveryChain.Repository.ProductRepo;
-import com.cry.DeliveryChain.Repository.UserAccountRepo;
 
 @Controller
 @RequestMapping(value = "/Supplier")
 public class SupplierController {
-    ProductRepo productRepo;
-    BillRepo billRepo;
-    BillProductRepo billProductRepo;
-    UserAccountRepo userAccountRepo;
+    RESTService restService;
     LoginController loginController;
     Functions _functions;
 
     @Value("${App.ProductBase64Photo}")
     private String productBase64Photo;
 
-    public SupplierController(ProductRepo ProductRepo, BillRepo BillRepo, BillProductRepo BillProductRepo, UserAccountRepo UserAccountRepo,
-            LoginController LoginController, Functions Functions) {
-        this.productRepo = ProductRepo;
-        this.billRepo = BillRepo;
-        this.billProductRepo = BillProductRepo;
-        this.userAccountRepo = UserAccountRepo;
+    public SupplierController(RESTService RESTService, LoginController LoginController, Functions Functions) {
+        this.restService = RESTService;
         this.loginController = LoginController;
         this._functions = Functions;
     }
@@ -53,9 +42,9 @@ public class SupplierController {
                 return "redirect:/Login/";
             }
 
-            var userAccount = userAccountRepo.findByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var productList = productRepo.findAllByUserAccountId(userAccount.Id);
+            var productList = restService.FindAllProductsByUserAccountUniqueId(userAccount.UniqueId.toString());
 
             model.addAttribute("title", "Sipariş Yönet");
             model.addAttribute("productBase64Photo", productBase64Photo);
@@ -80,13 +69,13 @@ public class SupplierController {
                 productBase64Photo = "data:" + Photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(Photo.getBytes()));
             }
 
-            var userAccount = userAccountRepo.findByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
             var currentAdditionDate = LocalDateTime.now().isBefore(LocalDateTime.parse(AdditionDate)) ? LocalDateTime.now() : LocalDateTime.parse(AdditionDate);
 
             var product = new Product(userAccount, Header, Description, new BigDecimal(Price), Integer.parseInt(Quantity), currentAdditionDate, productBase64Photo, true,
                     UUID.randomUUID());
-            productRepo.save(product);
+            restService.SaveProduct(product);
 
             return product.UniqueId.toString();
         }
@@ -105,7 +94,7 @@ public class SupplierController {
                 return false;
             }
 
-            var product = productRepo.findByUniqueId(UUID.fromString(UniqueId));
+            var product = restService.FindProductByUniqueId(UniqueId);
             if (product == null) {
                 return false;
             }
@@ -118,7 +107,7 @@ public class SupplierController {
             product.Photo = "data:" + Photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(Photo.getBytes()));
             product.IsActive = Boolean.parseBoolean(IsActive);
 
-            productRepo.save(product);
+            restService.SaveProduct(product);
 
             return true;
         }
@@ -136,9 +125,9 @@ public class SupplierController {
                 return false;
             }
 
-            var product = productRepo.findByUniqueId(UUID.fromString(UniqueId));
+            var product = restService.FindProductByUniqueId(UniqueId);
             if (product != null) {
-                productRepo.delete(product);
+                restService.DeleteProduct(product);
                 return true;
             }
             return false;
@@ -150,28 +139,23 @@ public class SupplierController {
     }
 
     @RequestMapping(value = "/Orders", method = RequestMethod.GET)
-    public String SupplierOrders(HttpSession httpSession, Model model, HttpServletRequest httpRequest) {
+    public String SupplierOrders(HttpSession httpSession, Model model) {
         try {
             if (!loginController.IsLoggedIn(httpSession)) {
                 return "redirect:/Login/";
             }
 
-            var userAccount = userAccountRepo.findByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var billProductList = billProductRepo.findAllBySupplierId(userAccount.Id);
+            var billProductList = restService.FindAllBillProductsBySupplierUniqueId(userAccount.Username);
 
             MultiValueMap<String, BillProduct> billMapList = new LinkedMultiValueMap<String, BillProduct>();
+            MultiValueMap<String, BillProduct> unApprovedBillMapList = new LinkedMultiValueMap<String, BillProduct>();
             for (BillProduct billProduct : billProductList) {
                 if (billProduct.Bill.IsApproved) {
                     billMapList.add(billProduct.Bill.UniqueId.toString(), billProduct);
-                }
-            }
-
-            var unApprovedBillProductList = billProductRepo.findAllBySupplierId(userAccount.Id);
-            MultiValueMap<String, BillProduct> unApprovedBillMapList = new LinkedMultiValueMap<String, BillProduct>();
-            for (BillProduct unApprovedBillProduct : unApprovedBillProductList) {
-                if (!unApprovedBillProduct.Bill.IsApproved) {
-                    unApprovedBillMapList.add(unApprovedBillProduct.Bill.UniqueId.toString(), unApprovedBillProduct);
+                } else {
+                    unApprovedBillMapList.add(billProduct.Bill.UniqueId.toString(), billProduct);
                 }
             }
 
@@ -195,22 +179,22 @@ public class SupplierController {
                 return "redirect:/Login/";
             }
 
-            var userAccount = userAccountRepo.findByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var billUniqueId = UUID.fromString(httpRequest.getParameter("UniqueId"));
+            var billUniqueId = httpRequest.getParameter("UniqueId");
 
-            var bill = billRepo.findByUniqueId(billUniqueId);
+            var bill = restService.FindBillByUniqueId(billUniqueId);
             if (bill == null) {
                 return "Fatura bulunamadı.";
             }
 
-            var billProductList = billProductRepo.findAllByBillId(bill.Id);
+            var billProductList = restService.FindAllBillProductsByBillUniqueId(bill.UniqueId.toString());
             if (billProductList.get(0).Supplier.Id != userAccount.Id) {
                 return "Bu faturayı onaylayamazsınız.";
             }
 
             bill.IsApproved = true;
-            billRepo.save(bill);
+            restService.SaveBill(bill);
 
             return bill.UniqueId.toString();
         }

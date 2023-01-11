@@ -5,7 +5,6 @@ import java.util.Base64;
 import java.util.UUID;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,25 +14,18 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.cry.DeliveryChain.Core.Functions;
 import com.cry.DeliveryChain.Entity.UserAccount;
-import com.cry.DeliveryChain.Repository.UserAccountRepo;
 
 @Controller
 @RequestMapping(value = "/Login")
 public class LoginController {
-    UserAccountRepo userAccountRepo;
-
+    RESTService restService;
     Functions _functions;
-
-    @Value("${App.Username}")
-    private String appUsername;
-    @Value("${App.Password}")
-    private String appPassword;
 
     public LoginController() {}
 
     @Autowired
-    public LoginController(UserAccountRepo UserAccountRepo, Functions Functions) {
-        this.userAccountRepo = UserAccountRepo;
+    public LoginController(RESTService RESTService, Functions Functions) {
+        this.restService = RESTService;
         this._functions = Functions;
     }
 
@@ -56,7 +48,7 @@ public class LoginController {
     @RequestMapping(value = "/Save", method = RequestMethod.POST)
     public String Save(HttpSession httpSession, RedirectAttributes redirectAttributes, String Username, String Password) {
         try {
-            var userAccount = userAccountRepo.findByUsername(Username);
+            var userAccount = restService.FindUserAccountByUsername(Username);
             if (userAccount == null || !BCrypt.checkpw(Password, userAccount.Password) || !userAccount.IsActive) {
                 redirectAttributes.addAttribute("Notification", "Bu hesap mevcut değil ya da şifre eşleşmiyor.");
                 return "redirect:/Login";
@@ -112,7 +104,7 @@ public class LoginController {
                 return "redirect:/Login/Register/";
             }
 
-            var userAccount = userAccountRepo.findByUsernameOrEmail(Username, Email);
+            var userAccount = restService.FindUserAccountByUsernameOrEmail(Username, Email);
             if (userAccount != null) {
                 redirectAttributes.addAttribute("Notification", "Bu hesap zaten kayıtlı.");
                 return "redirect:/Login/Register/";
@@ -135,7 +127,7 @@ public class LoginController {
 
             userAccount = new UserAccount(Email, Username, BCrypt.hashpw(Password, BCrypt.gensalt(10)), AccountType, LocalDateTime.now(), photoBase64, false,
                     userAccountUniqueId);
-            userAccountRepo.save(userAccount);
+            restService.SaveUserAccount(userAccount);
 
             redirectAttributes.addAttribute("Notification", "Hesap başarı ile oluşturuldu. Lütfen mailinizi kontrol edin.");
             return "redirect:/Login/";
@@ -151,9 +143,9 @@ public class LoginController {
     @RequestMapping(value = "/UserConfirmation", method = RequestMethod.GET)
     public String UserConfirmation(RedirectAttributes redirectAttributes, String UniqueId) {
         try {
-            var userAccount = userAccountRepo.findByUniqueId(UUID.fromString(UniqueId));
+            var userAccount = restService.FindUserAccountByUniqueId(UniqueId);
             userAccount.IsActive = true;
-            userAccountRepo.save(userAccount);
+            restService.SaveUserAccount(userAccount);
 
             redirectAttributes.addAttribute("Notification", "Hesabınız başarı ile aktifleştirildi.");
             return "redirect:/Login/";
@@ -165,8 +157,8 @@ public class LoginController {
         }
     }
 
-    public UUID GetSessionUserUniqueId(HttpSession httpSession) {
-        return UUID.fromString(httpSession.getAttribute("LOGIN_UniqueId").toString());
+    public String GetSessionUserUniqueId(HttpSession httpSession) {
+        return httpSession.getAttribute("LOGIN_UniqueId").toString();
     }
 
     public Boolean IsLoggedIn(HttpSession httpSession) {
@@ -176,7 +168,7 @@ public class LoginController {
             }
 
             var userAccountUniqueId = httpSession.getAttribute("LOGIN_UniqueId");
-            var userAccount = userAccountRepo.findByUniqueId(UUID.fromString(userAccountUniqueId.toString()));
+            var userAccount = restService.FindUserAccountByUniqueId(userAccountUniqueId.toString());
             if (!userAccount.IsActive) {
                 return false;
             }

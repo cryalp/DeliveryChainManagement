@@ -1,0 +1,793 @@
+{
+	"info": {
+		"_postman_id": "d94bdd1c-b2b1-45ba-9c25-66abd19c13a9",
+		"name": "DeliveryChainManagement",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9024145"
+	},
+	"item": [
+		{
+			"name": "LoginController",
+			"item": [
+				{
+					"name": "Index",
+					"protocolProfileBehavior": {
+						"followOriginalHttpMethod": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Login?Notification=Postman_TEST",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Login"
+							],
+							"query": [
+								{
+									"key": "Notification",
+									"value": "Postman_TEST"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Save",
+					"protocolProfileBehavior": {
+						"followOriginalHttpMethod": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Login/Save?Username=cryalp&Password=x_321x_321X",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Login",
+								"Save"
+							],
+							"query": [
+								{
+									"key": "Username",
+									"value": "cryalp"
+								},
+								{
+									"key": "Password",
+									"value": "x_321x_321X"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"protocolProfileBehavior": {
+						"followOriginalHttpMethod": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Login/Logout",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Login",
+								"Logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register_GET",
+					"protocolProfileBehavior": {
+						"followOriginalHttpMethod": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Login/Register?Notification=Postman_TEST",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Login",
+								"Register"
+							],
+							"query": [
+								{
+									"key": "Notification",
+									"value": "Postman_TEST"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register_POST",
+					"protocolProfileBehavior": {
+						"followOriginalHttpMethod": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Photo",
+									"type": "file",
+									"src": "/C:/Users/CRYALP2/Downloads/Pictures/pepo64.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/Login/Register?Email=cryalp@cryalp.com&Username=cryalp&Password=x_321x_321X&PasswordConfirm=x_321x_321X&AccountType=Supplier",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Login",
+								"Register"
+							],
+							"query": [
+								{
+									"key": "Email",
+									"value": "cryalp@cryalp.com"
+								},
+								{
+									"key": "Username",
+									"value": "cryalp"
+								},
+								{
+									"key": "Password",
+									"value": "x_321x_321X"
+								},
+								{
+									"key": "PasswordConfirm",
+									"value": "x_321x_321X"
+								},
+								{
+									"key": "AccountType",
+									"value": "Supplier"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UserConfirmation",
+					"protocolProfileBehavior": {
+						"followOriginalHttpMethod": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Login/UserConfirmation?UniqueId=d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Login",
+								"UserConfirmation"
+							],
+							"query": [
+								{
+									"key": "UniqueId",
+									"value": "d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RetailerController",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/?Notification=Postman_TEST",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								""
+							],
+							"query": [
+								{
+									"key": "Notification",
+									"value": "Postman_TEST"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AddToCart_POST",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Retailer/AddToCart?UniqueId=b0482927-61b6-4f75-bfab-d14374a175f2&Quantity=1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Retailer",
+								"AddToCart"
+							],
+							"query": [
+								{
+									"key": "UniqueId",
+									"value": "b0482927-61b6-4f75-bfab-d14374a175f2"
+								},
+								{
+									"key": "Quantity",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RemoveFromCart_POST",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Retailer/RemoveFromCart?UniqueId=b0482927-61b6-4f75-bfab-d14374a175f2",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Retailer",
+								"RemoveFromCart"
+							],
+							"query": [
+								{
+									"key": "UniqueId",
+									"value": "b0482927-61b6-4f75-bfab-d14374a175f2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CheckOut_GET",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Retailer/CheckOut?Notification=Postman_TEST",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Retailer",
+								"CheckOut"
+							],
+							"query": [
+								{
+									"key": "Notification",
+									"value": "Postman_TEST"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CheckOut_POST",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Retailer/CheckOutPOST",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Retailer",
+								"CheckOutPOST"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Retailer/Orders",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Retailer",
+								"Orders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SupplierController",
+			"item": [
+				{
+					"name": "Index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Supplier",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Supplier"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add_POST",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Photo",
+									"type": "file",
+									"src": "/C:/Users/CRYALP2/Downloads/Pictures/pepo64.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/Supplier/Add?Header=Postman&Description=Test&Price=12&Quantity=3&AdditionDate=2023-01-11T16:35:35",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Supplier",
+								"Add"
+							],
+							"query": [
+								{
+									"key": "Header",
+									"value": "Postman"
+								},
+								{
+									"key": "Description",
+									"value": "Test"
+								},
+								{
+									"key": "Price",
+									"value": "12"
+								},
+								{
+									"key": "Quantity",
+									"value": "3"
+								},
+								{
+									"key": "AdditionDate",
+									"value": "2023-01-11T16:35:35"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit_POST",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Photo",
+									"type": "file",
+									"src": "/C:/Users/CRYALP2/Downloads/Pictures/pepo64.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/Supplier/Edit?Header=Postman&Description=Test&Price=12&Quantity=3&AdditionDate=2023-01-11T16:35:35&IsActive=false&UniqueId=7268e8e3-d492-4688-925d-1c1da11c0808",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Supplier",
+								"Edit"
+							],
+							"query": [
+								{
+									"key": "Header",
+									"value": "Postman"
+								},
+								{
+									"key": "Description",
+									"value": "Test"
+								},
+								{
+									"key": "Price",
+									"value": "12"
+								},
+								{
+									"key": "Quantity",
+									"value": "3"
+								},
+								{
+									"key": "AdditionDate",
+									"value": "2023-01-11T16:35:35"
+								},
+								{
+									"key": "IsActive",
+									"value": "false"
+								},
+								{
+									"key": "UniqueId",
+									"value": "7268e8e3-d492-4688-925d-1c1da11c0808"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete_POST",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Supplier/Delete?UniqueId=7268e8e3-d492-4688-925d-1c1da11c0808",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Supplier",
+								"Delete"
+							],
+							"query": [
+								{
+									"key": "UniqueId",
+									"value": "7268e8e3-d492-4688-925d-1c1da11c0808"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Supplier/Orders",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Supplier",
+								"Orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OrderApprove_POST",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/Supplier/OrderApprove?UniqueId=c533f447-f2a2-4e09-b3fe-9f428b188e01",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"Supplier",
+								"OrderApprove"
+							],
+							"query": [
+								{
+									"key": "UniqueId",
+									"value": "c533f447-f2a2-4e09-b3fe-9f428b188e01"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RestService",
+			"item": [
+				{
+					"name": "FindProductByUniqueId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindProductByUniqueId?uniqueId=b0482927-61b6-4f75-bfab-d14374a175f2",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindProductByUniqueId"
+							],
+							"query": [
+								{
+									"key": "uniqueId",
+									"value": "b0482927-61b6-4f75-bfab-d14374a175f2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindAllProductsByUserAccountUniqueId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindAllProductsByUserAccountUniqueId?uniqueId=d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindAllProductsByUserAccountUniqueId"
+							],
+							"query": [
+								{
+									"key": "uniqueId",
+									"value": "d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindAllProductsByIsActiveAndQuantity",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/RESTService/FindAllProductsByIsActiveAndQuantity?isActive=true&quantity=1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"RESTService",
+								"FindAllProductsByIsActiveAndQuantity"
+							],
+							"query": [
+								{
+									"key": "isActive",
+									"value": "true"
+								},
+								{
+									"key": "quantity",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindCartByBuyerUniqueIdAndProductId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindCartByBuyerUniqueIdAndProductId?buyerUniqueId=d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb&productId=3",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindCartByBuyerUniqueIdAndProductId"
+							],
+							"query": [
+								{
+									"key": "buyerUniqueId",
+									"value": "d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb"
+								},
+								{
+									"key": "productId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindAllCartsByBuyerUniqueId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindAllCartsByBuyerUniqueId?uniqueId=d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindAllCartsByBuyerUniqueId"
+							],
+							"query": [
+								{
+									"key": "uniqueId",
+									"value": "d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindBillByUniqueId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindBillByUniqueId?uniqueId=b515e9d0-0bab-4e77-af87-bfb329adcec1",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindBillByUniqueId"
+							],
+							"query": [
+								{
+									"key": "uniqueId",
+									"value": "b515e9d0-0bab-4e77-af87-bfb329adcec1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindAllBillsByBuyerUniqueIdAndIsApproved",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindAllBillsByBuyerUniqueIdAndIsApproved?buyerUniqueId=d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb&isApproved=true",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindAllBillsByBuyerUniqueIdAndIsApproved"
+							],
+							"query": [
+								{
+									"key": "buyerUniqueId",
+									"value": "d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb"
+								},
+								{
+									"key": "isApproved",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindAllBillProductsByBillUniqueId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindAllBillProductsByBillUniqueId?uniqueId=b515e9d0-0bab-4e77-af87-bfb329adcec1",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindAllBillProductsByBillUniqueId"
+							],
+							"query": [
+								{
+									"key": "uniqueId",
+									"value": "b515e9d0-0bab-4e77-af87-bfb329adcec1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindAllBillProductsBySupplierUniqueId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindAllBillProductsBySupplierUniqueId?uniqueId=d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindAllBillProductsBySupplierUniqueId"
+							],
+							"query": [
+								{
+									"key": "uniqueId",
+									"value": "d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "https://localhost",
+			"type": "string"
+		},
+		{
+			"key": "REST_BASE_URL",
+			"value": "https://localhost/RESTService",
+			"type": "string"
+		}
+	]
+}

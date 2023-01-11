@@ -9,10 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name = "BillProduct")
 @Table(name = "BillProduct")
 public class BillProduct {
+    @JsonIgnore
     @Id
     @Column(name = "Id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

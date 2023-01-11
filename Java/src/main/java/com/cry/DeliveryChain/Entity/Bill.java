@@ -13,10 +13,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name = "Bill")
 @Table(name = "Bill")
 public class Bill {
+    @JsonIgnore
     @Id
     @Column(name = "Id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

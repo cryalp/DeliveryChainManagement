@@ -15,10 +15,12 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity(name = "Product")
 @Table(name = "Product")
 public class Product {
+    @JsonIgnore
     @Id
     @Column(name = "Id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -17,30 +17,16 @@ import com.cry.DeliveryChain.Entity.Bill;
 import com.cry.DeliveryChain.Entity.BillProduct;
 import com.cry.DeliveryChain.Entity.Cart;
 import com.cry.DeliveryChain.Entity.Product;
-import com.cry.DeliveryChain.Repository.BillProductRepo;
-import com.cry.DeliveryChain.Repository.BillRepo;
-import com.cry.DeliveryChain.Repository.CartRepo;
-import com.cry.DeliveryChain.Repository.ProductRepo;
-import com.cry.DeliveryChain.Repository.UserAccountRepo;
 
 @Controller
 @RequestMapping(value = "/")
 public class RetailerController {
-    ProductRepo productRepo;
-    BillRepo billRepo;
-    BillProductRepo billProductRepo;
-    CartRepo cartRepo;
-    UserAccountRepo userAccountRepo;
+    RESTService restService;
     LoginController loginController;
     Functions _functions;
 
-    public RetailerController(ProductRepo ProductRepo, BillRepo BillRepo, BillProductRepo BillProductRepo, CartRepo CartRepo, UserAccountRepo UserAccountRepo,
-            LoginController LoginController, Functions Functions) {
-        this.productRepo = ProductRepo;
-        this.billRepo = BillRepo;
-        this.billProductRepo = BillProductRepo;
-        this.cartRepo = CartRepo;
-        this.userAccountRepo = UserAccountRepo;
+    public RetailerController(RESTService RESTService, LoginController LoginController, Functions Functions) {
+        this.restService = RESTService;
         this.loginController = LoginController;
         this._functions = Functions;
     }
@@ -58,7 +44,7 @@ public class RetailerController {
             }
             model.addAttribute("Notification", notification);
 
-            var productList = productRepo.findAllByIsActiveAndQuantity(true, 1);
+            var productList = restService.FindAllProductsByIsActiveAndQuantity(true, 1);
 
             model.addAttribute("title", "Ürünler");
             model.addAttribute("productList", productList);
@@ -78,24 +64,24 @@ public class RetailerController {
                 return "redirect:/Login/";
             }
 
-            var buyerUserAccount = userAccountRepo.findByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            var buyerUserAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var productUniqueId = UUID.fromString(httpRequest.getParameter("UniqueId"));
+            var productUniqueId = httpRequest.getParameter("UniqueId");
             var productQuantity = Integer.parseInt(httpRequest.getParameter("Quantity"));
 
-            var product = productRepo.findByUniqueId(productUniqueId);
+            var product = restService.FindProductByUniqueId(productUniqueId);
 
             if (!product.IsActive || product.Quantity < productQuantity) {
                 return "Ürün aktif değil ya da stok aşıldı.";
             }
 
-            var cart = cartRepo.findByBuyerIdAndProductId(buyerUserAccount.Id, product.Id);
+            var cart = restService.FindCartByBuyerUniqueIdAndProductId(buyerUserAccount.UniqueId.toString(), product.Id);
             if (cart == null) {
                 cart = new Cart(buyerUserAccount, product, productQuantity, UUID.randomUUID());
-                cartRepo.save(cart);
+                restService.SaveCart(cart);
             } else {
                 cart.Quantity = productQuantity;
-                cartRepo.save(cart);
+                restService.SaveCart(cart);
             }
 
             return cart.UniqueId.toString();
@@ -114,15 +100,15 @@ public class RetailerController {
                 return "redirect:/Login/";
             }
 
-            var buyerUserAccount = userAccountRepo.findByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            var buyerUserAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var productUniqueId = UUID.fromString(httpRequest.getParameter("UniqueId"));
-            var product = productRepo.findByUniqueId(productUniqueId);
+            var productUniqueId = httpRequest.getParameter("UniqueId");
+            var product = restService.FindProductByUniqueId(productUniqueId);
 
-            var cartList = cartRepo.findAllByBuyerId(buyerUserAccount.Id);
+            var cartList = restService.FindAllCartsByBuyerUniqueId(buyerUserAccount.UniqueId.toString());
             for (Cart cart : cartList) {
                 if (cart.Product.UniqueId == product.UniqueId) {
-                    cartRepo.delete(cart);
+                    restService.DeleteCart(cart);
                     return cart.UniqueId.toString();
                 }
             }
@@ -148,8 +134,8 @@ public class RetailerController {
             }
             model.addAttribute("Notification", notification);
 
-            var buyerUserAccount = userAccountRepo.findByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
-            var cartProductList = cartRepo.findAllByBuyerId(buyerUserAccount.Id);
+            var buyerUserAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            var cartProductList = restService.FindAllCartsByBuyerUniqueId(buyerUserAccount.UniqueId.toString());
 
             var productList = new ArrayList<Product>();
             var inActiveProductList = new ArrayList<Product>();
@@ -159,7 +145,7 @@ public class RetailerController {
             };
 
             for (Cart cartProduct : cartProductList) {
-                var product = productRepo.findByUniqueId(cartProduct.Product.UniqueId);
+                var product = restService.FindProductByUniqueId(cartProduct.Product.UniqueId.toString());
                 if (product.IsActive && product.Quantity > 0 && product.Quantity >= cartProduct.Quantity) {
                     product.Quantity = cartProduct.Quantity;
                     productList.add(product);
@@ -191,37 +177,37 @@ public class RetailerController {
                 return "redirect:/Login/";
             }
 
-            var buyerUserAccount = userAccountRepo.findByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            var buyerUserAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var cartList = cartRepo.findAllByBuyerId(buyerUserAccount.Id);
+            var cartList = restService.FindAllCartsByBuyerUniqueId(buyerUserAccount.UniqueId.toString());
 
             if (cartList.isEmpty()) {
                 return "Sepet boş";
             }
 
             for (Cart cart : cartList) {
-                var product = productRepo.findByUniqueId(cart.Product.UniqueId);
+                var product = restService.FindProductByUniqueId(cart.Product.UniqueId.toString());
                 if (!product.IsActive || product.Quantity < cart.Quantity) {
                     return "'" + product.Header + "' isimli ürün artık aktif değil.";
                 }
             }
 
             var bill = new Bill(buyerUserAccount, BigDecimal.valueOf(0), LocalDateTime.now(), false, UUID.randomUUID());
-            billRepo.save(bill);
+            restService.SaveBill(bill);
 
             for (Cart cart : cartList) {
-                var product = productRepo.findByUniqueId(cart.Product.UniqueId);
+                var product = restService.FindProductByUniqueId(cart.Product.UniqueId.toString());
                 var billProduct = new BillProduct(buyerUserAccount, bill, product, product.Quantity, product.Price);
                 bill.TotalPrice = bill.TotalPrice.add(product.Price.multiply(BigDecimal.valueOf(product.Quantity)));
-                billProductRepo.save(billProduct);
+                restService.SaveBillProduct(billProduct);
 
                 product.Quantity -= cart.Quantity;
-                productRepo.save(product);
+                restService.SaveProduct(product);
 
-                cartRepo.delete(cart);
+                restService.DeleteCart(cart);
             }
 
-            billRepo.save(bill);
+            restService.SaveBill(bill);
 
             return bill.UniqueId.toString();
         }
@@ -238,18 +224,18 @@ public class RetailerController {
                 return "redirect:/Login/";
             }
 
-            var buyerUserAccount = userAccountRepo.findByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            var buyerUserAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var billList = billRepo.findAllByBuyerIdAndIsApproved(buyerUserAccount.Id, true);
+            var billList = restService.FindAllBillsByBuyerUniqueIdAndIsApproved(buyerUserAccount.UniqueId.toString(), true);
             var billProductList = new ArrayList<List<BillProduct>>();
             billList.forEach(bill -> {
-                billProductList.add(billProductRepo.findAllByBillId(bill.Id));
+                billProductList.add(restService.FindAllBillProductsByBillUniqueId(bill.UniqueId.toString()));
             });
 
-            var unApprovedBillList = billRepo.findAllByBuyerIdAndIsApproved(buyerUserAccount.Id, false);
+            var unApprovedBillList = restService.FindAllBillsByBuyerUniqueIdAndIsApproved(buyerUserAccount.UniqueId.toString(), false);
             var unApprovedBillProductList = new ArrayList<List<BillProduct>>();
             unApprovedBillList.forEach(bill -> {
-                unApprovedBillProductList.add(billProductRepo.findAllByBillId(bill.Id));
+                unApprovedBillProductList.add(restService.FindAllBillProductsByBillUniqueId(bill.UniqueId.toString()));
             });
 
             model.addAttribute("title", "Siparişleri Görüntüle");

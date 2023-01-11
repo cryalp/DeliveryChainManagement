@@ -15,6 +15,9 @@ public interface ProductRepo extends CrudRepository<Product, Long> {
     @Query("FROM Product WHERE UserAccountId = :UserAccountId")
     List<Product> findAllByUserAccountId(Integer UserAccountId);
 
+    @Query("FROM Product WHERE UserAccountId = (SELECT Id FROM UserAccount WHERE UniqueId = :UserAccountUniqueId)")
+    List<Product> findAllByUserAccountUniqueId(UUID UserAccountUniqueId);
+
     @Query("FROM Product WHERE IsActive = :IsActive")
     List<Product> findAllByIsActive(Boolean IsActive);
 
