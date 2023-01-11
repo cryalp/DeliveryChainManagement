@@ -3,6 +3,8 @@ package com.cry.DeliveryChain.Controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import javax.servlet.http.HttpSession;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,15 +29,17 @@ public class RESTService {
     BillProductRepo billProductRepo;
     CartRepo cartRepo;
     UserAccountRepo userAccountRepo;
+    LoginController loginController;
     Functions _functions;
 
     public RESTService(ProductRepo ProductRepo, BillRepo BillRepo, BillProductRepo BillProductRepo, CartRepo CartRepo, UserAccountRepo UserAccountRepo,
-            Functions Functions) {
+            @Lazy LoginController LoginController, Functions Functions) {
         this.productRepo = ProductRepo;
         this.billRepo = BillRepo;
         this.billProductRepo = BillProductRepo;
         this.cartRepo = CartRepo;
         this.userAccountRepo = UserAccountRepo;
+        this.loginController = LoginController;
         this._functions = Functions;
     }
 
@@ -104,11 +108,11 @@ public class RESTService {
         }
     }
 
-    @RequestMapping(value = "/FindAllProductsByUserAccountUniqueId", method = RequestMethod.GET)
+    @RequestMapping(value = "/FindAllProductsBySupplierUniqueId", method = RequestMethod.GET)
     @ResponseBody
-    public List<Product> FindAllProductsByUserAccountUniqueId(String uniqueId) {
+    public List<Product> FindAllProductsBySupplierUniqueId(String uniqueId) {
         try {
-            return productRepo.findAllByUserAccountUniqueId(UUID.fromString(uniqueId));
+            return productRepo.findAllBySupplierUniqueId(UUID.fromString(uniqueId));
         }
         catch (Exception e) {
             return new ArrayList<Product>();
@@ -146,8 +150,12 @@ public class RESTService {
 
     @RequestMapping(value = "/FindCartByBuyerUniqueIdAndProductId", method = RequestMethod.GET)
     @ResponseBody
-    public Cart FindCartByBuyerUniqueIdAndProductId(String buyerUniqueId, Integer productId) {
+    public Cart FindCartByBuyerUniqueIdAndProductId(HttpSession httpSession, String buyerUniqueId, Integer productId) {
         try {
+            if (!loginController.IsLoggedIn(httpSession)) {
+                return new Cart();
+            }
+
             return cartRepo.findByBuyerUniqueIdAndProductId(UUID.fromString(buyerUniqueId), productId);
         }
         catch (Exception e) {
@@ -157,8 +165,12 @@ public class RESTService {
 
     @RequestMapping(value = "/FindAllCartsByBuyerUniqueId", method = RequestMethod.GET)
     @ResponseBody
-    public List<Cart> FindAllCartsByBuyerUniqueId(String uniqueId) {
+    public List<Cart> FindAllCartsByBuyerUniqueId(HttpSession httpSession, String uniqueId) {
         try {
+            if (!loginController.IsLoggedIn(httpSession)) {
+                return new ArrayList<Cart>();
+            }
+
             return cartRepo.findAllByBuyerUniqueId(UUID.fromString(uniqueId));
         }
         catch (Exception e) {
@@ -177,8 +189,12 @@ public class RESTService {
 
     @RequestMapping(value = "/FindBillByUniqueId", method = RequestMethod.GET)
     @ResponseBody
-    public Bill FindBillByUniqueId(String uniqueId) {
+    public Bill FindBillByUniqueId(HttpSession httpSession, String uniqueId) {
         try {
+            if (!loginController.IsLoggedIn(httpSession)) {
+                return new Bill();
+            }
+
             return billRepo.findByUniqueId(UUID.fromString(uniqueId));
         }
         catch (Exception e) {
@@ -188,8 +204,12 @@ public class RESTService {
 
     @RequestMapping(value = "/FindAllBillsByBuyerUniqueIdAndIsApproved", method = RequestMethod.GET)
     @ResponseBody
-    public List<Bill> FindAllBillsByBuyerUniqueIdAndIsApproved(String buyerUniqueId, Boolean isApproved) {
+    public List<Bill> FindAllBillsByBuyerUniqueIdAndIsApproved(HttpSession httpSession, String buyerUniqueId, Boolean isApproved) {
         try {
+            if (!loginController.IsLoggedIn(httpSession)) {
+                return new ArrayList<Bill>();
+            }
+
             return billRepo.findAllByBuyerUniqueIdAndIsApproved(UUID.fromString(buyerUniqueId), isApproved);
         }
         catch (Exception e) {
@@ -208,8 +228,12 @@ public class RESTService {
 
     @RequestMapping(value = "/FindAllBillProductsByBillUniqueId", method = RequestMethod.GET)
     @ResponseBody
-    public List<BillProduct> FindAllBillProductsByBillUniqueId(String uniqueId) {
+    public List<BillProduct> FindAllBillProductsByBillUniqueId(HttpSession httpSession, String uniqueId) {
         try {
+            if (!loginController.IsLoggedIn(httpSession)) {
+                return new ArrayList<BillProduct>();
+            }
+
             return billProductRepo.findAllByBillUniqueId(UUID.fromString(uniqueId));
         }
         catch (Exception e) {
@@ -219,8 +243,12 @@ public class RESTService {
 
     @RequestMapping(value = "/FindAllBillProductsBySupplierUniqueId", method = RequestMethod.GET)
     @ResponseBody
-    public List<BillProduct> FindAllBillProductsBySupplierUniqueId(String uniqueId) {
+    public List<BillProduct> FindAllBillProductsBySupplierUniqueId(HttpSession httpSession, String uniqueId) {
         try {
+            if (!loginController.IsLoggedIn(httpSession)) {
+                return new ArrayList<BillProduct>();
+            }
+
             return billProductRepo.findAllBySupplierUniqueId(UUID.fromString(uniqueId));
         }
         catch (Exception e) {

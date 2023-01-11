@@ -533,7 +533,7 @@
 			]
 		},
 		{
-			"name": "RestService",
+			"name": "RESTService",
 			"item": [
 				{
 					"name": "FindProductByUniqueId",

@@ -44,7 +44,7 @@ public class SupplierController {
 
             var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var productList = restService.FindAllProductsByUserAccountUniqueId(userAccount.UniqueId.toString());
+            var productList = restService.FindAllProductsBySupplierUniqueId(userAccount.UniqueId.toString());
 
             model.addAttribute("title", "Sipariş Yönet");
             model.addAttribute("productBase64Photo", productBase64Photo);
@@ -147,7 +147,7 @@ public class SupplierController {
 
             var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var billProductList = restService.FindAllBillProductsBySupplierUniqueId(userAccount.Username);
+            var billProductList = restService.FindAllBillProductsBySupplierUniqueId(httpSession, userAccount.Username);
 
             MultiValueMap<String, BillProduct> billMapList = new LinkedMultiValueMap<String, BillProduct>();
             MultiValueMap<String, BillProduct> unApprovedBillMapList = new LinkedMultiValueMap<String, BillProduct>();
@@ -183,12 +183,12 @@ public class SupplierController {
 
             var billUniqueId = httpRequest.getParameter("UniqueId");
 
-            var bill = restService.FindBillByUniqueId(billUniqueId);
+            var bill = restService.FindBillByUniqueId(httpSession, billUniqueId);
             if (bill == null) {
                 return "Fatura bulunamadı.";
             }
 
-            var billProductList = restService.FindAllBillProductsByBillUniqueId(bill.UniqueId.toString());
+            var billProductList = restService.FindAllBillProductsByBillUniqueId(httpSession, bill.UniqueId.toString());
             if (billProductList.get(0).Supplier.Id != userAccount.Id) {
                 return "Bu faturayı onaylayamazsınız.";
             }

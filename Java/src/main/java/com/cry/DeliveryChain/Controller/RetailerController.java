@@ -75,7 +75,7 @@ public class RetailerController {
                 return "Ürün aktif değil ya da stok aşıldı.";
             }
 
-            var cart = restService.FindCartByBuyerUniqueIdAndProductId(buyerUserAccount.UniqueId.toString(), product.Id);
+            var cart = restService.FindCartByBuyerUniqueIdAndProductId(httpSession, buyerUserAccount.UniqueId.toString(), product.Id);
             if (cart == null) {
                 cart = new Cart(buyerUserAccount, product, productQuantity, UUID.randomUUID());
                 restService.SaveCart(cart);
@@ -105,7 +105,7 @@ public class RetailerController {
             var productUniqueId = httpRequest.getParameter("UniqueId");
             var product = restService.FindProductByUniqueId(productUniqueId);
 
-            var cartList = restService.FindAllCartsByBuyerUniqueId(buyerUserAccount.UniqueId.toString());
+            var cartList = restService.FindAllCartsByBuyerUniqueId(httpSession, buyerUserAccount.UniqueId.toString());
             for (Cart cart : cartList) {
                 if (cart.Product.UniqueId == product.UniqueId) {
                     restService.DeleteCart(cart);
@@ -135,7 +135,7 @@ public class RetailerController {
             model.addAttribute("Notification", notification);
 
             var buyerUserAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
-            var cartProductList = restService.FindAllCartsByBuyerUniqueId(buyerUserAccount.UniqueId.toString());
+            var cartProductList = restService.FindAllCartsByBuyerUniqueId(httpSession, buyerUserAccount.UniqueId.toString());
 
             var productList = new ArrayList<Product>();
             var inActiveProductList = new ArrayList<Product>();
@@ -179,7 +179,7 @@ public class RetailerController {
 
             var buyerUserAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var cartList = restService.FindAllCartsByBuyerUniqueId(buyerUserAccount.UniqueId.toString());
+            var cartList = restService.FindAllCartsByBuyerUniqueId(httpSession, buyerUserAccount.UniqueId.toString());
 
             if (cartList.isEmpty()) {
                 return "Sepet boş";
@@ -226,16 +226,16 @@ public class RetailerController {
 
             var buyerUserAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
-            var billList = restService.FindAllBillsByBuyerUniqueIdAndIsApproved(buyerUserAccount.UniqueId.toString(), true);
+            var billList = restService.FindAllBillsByBuyerUniqueIdAndIsApproved(httpSession, buyerUserAccount.UniqueId.toString(), true);
             var billProductList = new ArrayList<List<BillProduct>>();
             billList.forEach(bill -> {
-                billProductList.add(restService.FindAllBillProductsByBillUniqueId(bill.UniqueId.toString()));
+                billProductList.add(restService.FindAllBillProductsByBillUniqueId(httpSession, bill.UniqueId.toString()));
             });
 
-            var unApprovedBillList = restService.FindAllBillsByBuyerUniqueIdAndIsApproved(buyerUserAccount.UniqueId.toString(), false);
+            var unApprovedBillList = restService.FindAllBillsByBuyerUniqueIdAndIsApproved(httpSession, buyerUserAccount.UniqueId.toString(), false);
             var unApprovedBillProductList = new ArrayList<List<BillProduct>>();
             unApprovedBillList.forEach(bill -> {
-                unApprovedBillProductList.add(restService.FindAllBillProductsByBillUniqueId(bill.UniqueId.toString()));
+                unApprovedBillProductList.add(restService.FindAllBillProductsByBillUniqueId(httpSession, bill.UniqueId.toString()));
             });
 
             model.addAttribute("title", "Siparişleri Görüntüle");
