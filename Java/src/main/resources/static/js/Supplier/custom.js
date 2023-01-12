@@ -121,7 +121,7 @@ $(document).ready(() => {
         formData.append("IsActive", $('#addIsActive').prop("checked"))
 
         $.ajax({
-            url: 'Supplier/Add',
+            url: '/Supplier/Add',
             type: 'POST',
             data: formData,
             processData: false,
@@ -233,7 +233,7 @@ $(document).ready(() => {
         const newPhoto = photoDataURL;
 
         $.ajax({
-            url: 'Supplier/Edit',
+            url: '/Supplier/Edit',
             type: 'POST',
             data: postedFormData,
             processData: false,
@@ -272,7 +272,7 @@ $(document).ready(() => {
 
     $('#deleteProductSubmit').on("click", () => {
         $.ajax({
-            url: 'Supplier/Delete',
+            url: '/Supplier/Delete',
             type: 'POST',
             data: $.param({ UniqueId: uniqueId }),
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',

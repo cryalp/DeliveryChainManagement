@@ -42,7 +42,8 @@
                                 th:attr="data-additionDate=${#temporals.format(billProduct.Bill.CreationDate, 'yyyy-MM-dd hh:mm:ss')}">
                             </td>
                             <td colspan="2">
-                                <img th:src="${billProduct.Product.Photo}" th:alt="${billProduct.Product.Header}" src="#" alt="#" width="32px" />
+                                <img th:each="productPhoto : ${billProduct.Product.PhotoList}" th:src="${productPhoto.Photo}" th:alt="${billProduct.Product.Header}"
+                                    width="32px" />
                             </td>
                         </tr>
                     </tbody>
@@ -76,7 +77,8 @@
                                 th:attr="data-additionDate=${#temporals.format(unApprovedBillProduct.Bill.CreationDate, 'yyyy-MM-dd hh:mm:ss')}">
                             </td>
                             <td colspan="2">
-                                <img th:src="${unApprovedBillProduct.Product.Photo}" th:alt="${unApprovedBillProduct.Product.Header}" width="32px" />
+                                <img th:each="productPhoto : ${unApprovedBillProduct.Product.PhotoList}" th:src="${productPhoto.Photo}"
+                                    th:alt="${unApprovedBillProduct.Product.Header}" width="32px" />
                             </td>
                         </tr>
                     </tbody>

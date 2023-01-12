@@ -5,6 +5,8 @@
 ```
 Just use the "auto.bat" file
 ```
+
+![SQL Diagram](SQL_ER_DIAGRAM.png)
  
 ## Manual Running
 ### Maven Clean And Package

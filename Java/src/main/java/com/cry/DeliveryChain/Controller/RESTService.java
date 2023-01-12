@@ -301,4 +301,19 @@ public class RESTService {
             return new ArrayList<BillProduct>();
         }
     }
+
+    @RequestMapping(value = "/FindAllBillProductsByProductUniqueId", method = RequestMethod.GET)
+    @ResponseBody
+    public List<BillProduct> FindAllBillProductsByProductUniqueId(HttpSession httpSession, String uniqueId) {
+        try {
+            if (!loginController.IsLoggedIn(httpSession)) {
+                return new ArrayList<BillProduct>();
+            }
+
+            return billProductRepo.findAllByProductUniqueId(UUID.fromString(uniqueId));
+        }
+        catch (Exception e) {
+            return new ArrayList<BillProduct>();
+        }
+    }
 }

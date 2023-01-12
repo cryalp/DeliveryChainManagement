@@ -13,7 +13,7 @@ public interface BillProductRepo extends CrudRepository<BillProduct, Long> {
     @Query("FROM BillProduct WHERE SupplierId = :SupplierId")
     List<BillProduct> findAllBySupplierId(Integer SupplierId);
     
-    @Query("FROM BillProduct WHERE (SELECT UniqueId FROM UserAccount) = :SupplierUniqueId")
+    @Query("FROM BillProduct WHERE SupplierId = (SELECT Id FROM UserAccount WHERE UniqueId = :SupplierUniqueId)")
     List<BillProduct> findAllBySupplierUniqueId(UUID SupplierUniqueId);
 
     @Query("FROM BillProduct WHERE BillId = :BillId")
@@ -24,4 +24,7 @@ public interface BillProductRepo extends CrudRepository<BillProduct, Long> {
 
     @Query("FROM BillProduct WHERE ProductId = :ProductId")
     List<BillProduct> findAllByProductId(Integer ProductId);
+
+    @Query("FROM BillProduct WHERE ProductId = (SELECT Id FROM Product WHERE UniqueId = :ProductUniqueId)")
+    List<BillProduct> findAllByProductUniqueId(UUID ProductUniqueId);
 }

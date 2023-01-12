@@ -153,6 +153,8 @@ public class RetailerController {
 
             for (var cartProduct : cartProductList) {
                 var product = restService.FindProductByUniqueId(cartProduct.Product.UniqueId.toString());
+                product.setPhotoList(restService.FindAllProductPhotosByProductUniqueId(product.UniqueId.toString()));
+
                 if (product.IsActive && product.Quantity > 0 && product.Quantity >= cartProduct.Quantity) {
                     product.Quantity = cartProduct.Quantity;
                     productList.add(product);
@@ -236,13 +238,21 @@ public class RetailerController {
             var billList = restService.FindAllBillsByBuyerUniqueIdAndIsApproved(httpSession, buyerUserAccount.UniqueId.toString(), true);
             var billProductList = new ArrayList<List<BillProduct>>();
             billList.forEach(bill -> {
-                billProductList.add(restService.FindAllBillProductsByBillUniqueId(httpSession, bill.UniqueId.toString()));
+                var dbBillProductList = restService.FindAllBillProductsByBillUniqueId(httpSession, bill.UniqueId.toString());
+                for (BillProduct billProduct : dbBillProductList) {
+                    billProduct.Product.setPhotoList(restService.FindAllProductPhotosByProductUniqueId(billProduct.Product.UniqueId.toString()));
+                }
+                billProductList.add(dbBillProductList);
             });
 
             var unApprovedBillList = restService.FindAllBillsByBuyerUniqueIdAndIsApproved(httpSession, buyerUserAccount.UniqueId.toString(), false);
             var unApprovedBillProductList = new ArrayList<List<BillProduct>>();
             unApprovedBillList.forEach(bill -> {
-                unApprovedBillProductList.add(restService.FindAllBillProductsByBillUniqueId(httpSession, bill.UniqueId.toString()));
+                var dbUnApprovedBillProductList = restService.FindAllBillProductsByBillUniqueId(httpSession, bill.UniqueId.toString());
+                for (BillProduct billProduct : dbUnApprovedBillProductList) {
+                    billProduct.Product.setPhotoList(restService.FindAllProductPhotosByProductUniqueId(billProduct.Product.UniqueId.toString()));
+                }
+                unApprovedBillProductList.add(dbUnApprovedBillProductList);
             });
 
             model.addAttribute("title", "Siparişleri Görüntüle");

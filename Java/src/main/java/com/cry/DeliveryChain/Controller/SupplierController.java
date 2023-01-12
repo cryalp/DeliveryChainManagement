@@ -172,6 +172,10 @@ public class SupplierController {
             var uniqueId = httpRequest.getParameter("UniqueId");
 
             var product = restService.FindProductByUniqueId(uniqueId);
+            var billProductList = restService.FindAllBillProductsByProductUniqueId(httpSession, product.UniqueId.toString());
+            if (billProductList.size() > 0) {
+                return false;
+            }
 
             var productPhotoList = restService.FindAllProductPhotosByProductUniqueId(product.UniqueId.toString());
             for (var productPhoto : productPhotoList) {
@@ -209,6 +213,8 @@ public class SupplierController {
             MultiValueMap<String, BillProduct> billMapList = new LinkedMultiValueMap<String, BillProduct>();
             MultiValueMap<String, BillProduct> unApprovedBillMapList = new LinkedMultiValueMap<String, BillProduct>();
             for (var billProduct : billProductList) {
+                billProduct.Product.setPhotoList(restService.FindAllProductPhotosByProductUniqueId(billProduct.Product.UniqueId.toString()));
+
                 if (billProduct.Bill.IsApproved) {
                     billMapList.add(billProduct.Bill.UniqueId.toString(), billProduct);
                 } else {

@@ -794,6 +794,29 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "FindAllBillProductsByProductUniqueId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindAllBillProductsByProductUniqueId?uniqueId=b0482927-61b6-4f75-bfab-d14374a175f2",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindAllBillProductsByProductUniqueId"
+							],
+							"query": [
+								{
+									"key": "uniqueId",
+									"value": "b0482927-61b6-4f75-bfab-d14374a175f2"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
