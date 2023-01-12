@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.cry.DeliveryChain.Core.Functions;
 import com.cry.DeliveryChain.Entity.BillProduct;
 import com.cry.DeliveryChain.Entity.Product;
+import com.cry.DeliveryChain.Entity.ProductPhoto;
 
 @Controller
 @RequestMapping(value = "/Supplier")
@@ -36,15 +37,25 @@ public class SupplierController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String Index(HttpSession httpSession, Model model) {
+    public String Index(HttpSession httpSession, Model model, HttpServletRequest httpRequest) {
         try {
             if (!loginController.IsLoggedIn(httpSession)) {
                 return "redirect:/Login/";
             }
 
+            var notification = httpRequest.getParameter("Notification");
+            if (notification != null && notification.length() > 64) {
+                notification = notification.substring(0, 64);
+            }
+            model.addAttribute("Notification", notification);
+
             var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
             var productList = restService.FindAllProductsBySupplierUniqueId(userAccount.UniqueId.toString());
+
+            for (var product : productList) {
+                product.setPhotoList(restService.FindAllProductPhotosByProductUniqueId(product.UniqueId.toString()));
+            }
 
             model.addAttribute("title", "Sipariş Yönet");
             model.addAttribute("productBase64Photo", productBase64Photo);
@@ -70,19 +81,26 @@ public class SupplierController {
             var price = httpRequest.getParameter("Price");
             var quantity = httpRequest.getParameter("Quantity");
             var additionDate = httpRequest.getParameter("AdditionDate");
-            var photo = ((MultipartHttpServletRequest) httpRequest).getFile("Photo");
-
-            if (photo != null) {
-                productBase64Photo = "data:" + photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(photo.getBytes()));
-            }
+            var photoList = ((MultipartHttpServletRequest) httpRequest).getFiles("PhotoList");
 
             var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
             var currentAdditionDate = LocalDateTime.now().isBefore(LocalDateTime.parse(additionDate)) ? LocalDateTime.now() : LocalDateTime.parse(additionDate);
 
-            var product = new Product(userAccount, header, description, new BigDecimal(price), Integer.parseInt(quantity), currentAdditionDate, productBase64Photo, true,
-                    UUID.randomUUID());
+            var product = new Product(userAccount, header, description, new BigDecimal(price), Integer.parseInt(quantity), currentAdditionDate, true, UUID.randomUUID());
             restService.SaveProduct(product);
+
+            var productPhoto = new ProductPhoto();
+            if (photoList.isEmpty()) {
+                productPhoto = new ProductPhoto(product, productBase64Photo, UUID.randomUUID());
+                restService.SaveProductPhoto(productPhoto);
+            } else {
+                for (var photo : photoList) {
+                    var photoBase64 = "data:" + photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(photo.getBytes()));
+                    productPhoto = new ProductPhoto(product, photoBase64, UUID.randomUUID());
+                    restService.SaveProductPhoto(productPhoto);
+                }
+            }
 
             return product.UniqueId.toString();
         }
@@ -105,7 +123,7 @@ public class SupplierController {
             var price = httpRequest.getParameter("Price");
             var quantity = httpRequest.getParameter("Quantity");
             var additionDate = httpRequest.getParameter("AdditionDate");
-            var photo = ((MultipartHttpServletRequest) httpRequest).getFile("Photo");
+            var photoList = ((MultipartHttpServletRequest) httpRequest).getFiles("PhotoList");
             var isActive = httpRequest.getParameter("IsActive");
             var uniqueId = httpRequest.getParameter("UniqueId");
 
@@ -119,14 +137,21 @@ public class SupplierController {
             product.Price = new BigDecimal(price);
             product.Quantity = Integer.parseInt(quantity);
             product.AdditionDate = LocalDateTime.parse(additionDate);
-            if (photo != null) {
-                product.Photo = "data:" + photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(photo.getBytes()));
-            } else {
-                product.Photo = productBase64Photo;
-            }
             product.IsActive = Boolean.parseBoolean(isActive);
 
             restService.SaveProduct(product);
+
+            var productPhoto = new ProductPhoto();
+            if (photoList.isEmpty()) {
+                productPhoto = new ProductPhoto(product, productBase64Photo, UUID.randomUUID());
+                restService.SaveProductPhoto(productPhoto);
+            } else {
+                for (var photo : photoList) {
+                    var photoBase64 = "data:" + photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(photo.getBytes()));
+                    productPhoto = new ProductPhoto(product, photoBase64, UUID.randomUUID());
+                    restService.SaveProductPhoto(productPhoto);
+                }
+            }
 
             return true;
         }
@@ -147,8 +172,13 @@ public class SupplierController {
             var uniqueId = httpRequest.getParameter("UniqueId");
 
             var product = restService.FindProductByUniqueId(uniqueId);
-            if (product != null) {
-                restService.DeleteProduct(product);
+
+            var productPhotoList = restService.FindAllProductPhotosByProductUniqueId(product.UniqueId.toString());
+            for (var productPhoto : productPhotoList) {
+                restService.DeleteProductPhoto(productPhoto);
+            }
+
+            if (product != null && restService.DeleteProduct(product)) {
                 return true;
             }
             return false;
@@ -160,11 +190,17 @@ public class SupplierController {
     }
 
     @RequestMapping(value = "/Orders", method = RequestMethod.GET)
-    public String SupplierOrders(HttpSession httpSession, Model model) {
+    public String SupplierOrders(HttpSession httpSession, Model model, HttpServletRequest httpRequest) {
         try {
             if (!loginController.IsLoggedIn(httpSession)) {
                 return "redirect:/Login/";
             }
+
+            var notification = httpRequest.getParameter("Notification");
+            if (notification != null && notification.length() > 64) {
+                notification = notification.substring(0, 64);
+            }
+            model.addAttribute("Notification", notification);
 
             var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
@@ -172,7 +208,7 @@ public class SupplierController {
 
             MultiValueMap<String, BillProduct> billMapList = new LinkedMultiValueMap<String, BillProduct>();
             MultiValueMap<String, BillProduct> unApprovedBillMapList = new LinkedMultiValueMap<String, BillProduct>();
-            for (BillProduct billProduct : billProductList) {
+            for (var billProduct : billProductList) {
                 if (billProduct.Bill.IsApproved) {
                     billMapList.add(billProduct.Bill.UniqueId.toString(), billProduct);
                 } else {
@@ -224,6 +260,5 @@ public class SupplierController {
             _functions.Logger(e.getMessage());
             return "Sipariş onaylanırken hata ile karşılaşıldı.";
         }
-
     }
 }

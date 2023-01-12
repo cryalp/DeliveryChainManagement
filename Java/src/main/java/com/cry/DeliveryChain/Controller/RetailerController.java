@@ -46,6 +46,10 @@ public class RetailerController {
 
             var productList = restService.FindAllProductsByIsActiveAndQuantity(true, 1);
 
+            for (var product : productList) {
+                product.setPhotoList(restService.FindAllProductPhotosByProductUniqueId(product.UniqueId.toString()));
+            }
+
             model.addAttribute("title", "Ürünler");
             model.addAttribute("productList", productList);
             return "Retailer/Index";
@@ -109,7 +113,7 @@ public class RetailerController {
             var product = restService.FindProductByUniqueId(productUniqueId);
 
             var cartList = restService.FindAllCartsByBuyerUniqueId(httpSession, buyerUserAccount.UniqueId.toString());
-            for (Cart cart : cartList) {
+            for (var cart : cartList) {
                 if (cart.Product.UniqueId == product.UniqueId) {
                     restService.DeleteCart(cart);
                     return cart.UniqueId.toString();
@@ -147,7 +151,7 @@ public class RetailerController {
                 BigDecimal totalPrice = BigDecimal.ZERO;
             };
 
-            for (Cart cartProduct : cartProductList) {
+            for (var cartProduct : cartProductList) {
                 var product = restService.FindProductByUniqueId(cartProduct.Product.UniqueId.toString());
                 if (product.IsActive && product.Quantity > 0 && product.Quantity >= cartProduct.Quantity) {
                     product.Quantity = cartProduct.Quantity;
@@ -188,7 +192,7 @@ public class RetailerController {
                 return "Sepet boş";
             }
 
-            for (Cart cart : cartList) {
+            for (var cart : cartList) {
                 var product = restService.FindProductByUniqueId(cart.Product.UniqueId.toString());
                 if (!product.IsActive || product.Quantity < cart.Quantity) {
                     return "'" + product.Header + "' isimli ürün artık aktif değil.";
@@ -198,7 +202,7 @@ public class RetailerController {
             var bill = new Bill(buyerUserAccount, BigDecimal.valueOf(0), LocalDateTime.now(), false, UUID.randomUUID());
             restService.SaveBill(bill);
 
-            for (Cart cart : cartList) {
+            for (var cart : cartList) {
                 var product = restService.FindProductByUniqueId(cart.Product.UniqueId.toString());
                 var billProduct = new BillProduct(buyerUserAccount, bill, product, product.Quantity, product.Price);
                 bill.TotalPrice = bill.TotalPrice.add(product.Price.multiply(BigDecimal.valueOf(product.Quantity)));

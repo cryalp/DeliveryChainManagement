@@ -2,6 +2,7 @@ package com.cry.DeliveryChain.Entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -12,7 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
+import javax.persistence.Transient;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,8 +46,8 @@ public class Product {
     @Column(name = "AdditionDate")
     public LocalDateTime AdditionDate;
 
-    @Column(name = "Photo")
-    public String Photo;
+    @Transient
+    public List<ProductPhoto> PhotoList;
 
     @Column(name = "IsActive")
     public Boolean IsActive;
@@ -58,16 +59,19 @@ public class Product {
 
     public Product() {}
 
-    public Product(UserAccount UserAccount, String Header, String Description, BigDecimal Price, Integer Quantity, LocalDateTime AdditionDate, String Photo,
-            Boolean IsActive, UUID UniqueId) {
+    public Product(UserAccount UserAccount, String Header, String Description, BigDecimal Price, Integer Quantity, LocalDateTime AdditionDate, Boolean IsActive,
+            UUID UniqueId) {
         this.UserAccount = UserAccount;
         this.Header = Header;
         this.Description = Description;
         this.Price = Price;
         this.Quantity = Quantity;
         this.AdditionDate = AdditionDate;
-        this.Photo = Photo;
         this.IsActive = IsActive;
         this.UniqueId = UniqueId;
+    }
+
+    public void setPhotoList(List<ProductPhoto> PhotoList) {
+        this.PhotoList = PhotoList;
     }
 }

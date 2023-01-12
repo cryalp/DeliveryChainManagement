@@ -559,17 +559,17 @@
 					"response": []
 				},
 				{
-					"name": "FindAllProductsByUserAccountUniqueId",
+					"name": "FindAllProductsBySupplierUniqueId",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{REST_BASE_URL}}/FindAllProductsByUserAccountUniqueId?uniqueId=d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb",
+							"raw": "{{REST_BASE_URL}}/FindAllProductsBySupplierUniqueId?uniqueId=d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb",
 							"host": [
 								"{{REST_BASE_URL}}"
 							],
 							"path": [
-								"FindAllProductsByUserAccountUniqueId"
+								"FindAllProductsBySupplierUniqueId"
 							],
 							"query": [
 								{
@@ -610,17 +610,57 @@
 					"response": []
 				},
 				{
-					"name": "FindCartByBuyerUniqueIdAndProductId",
+					"name": "FindAllProductPhotos",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{REST_BASE_URL}}/FindCartByBuyerUniqueIdAndProductId?buyerUniqueId=d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb&productId=3",
+							"raw": "{{REST_BASE_URL}}/FindAllProductPhotos",
 							"host": [
 								"{{REST_BASE_URL}}"
 							],
 							"path": [
-								"FindCartByBuyerUniqueIdAndProductId"
+								"FindAllProductPhotos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindAllProductPhotosByProductUniqueId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindAllProductPhotosByProductUniqueId?uniqueId=5b6c6e1e-e0a0-48bf-ac48-1e7e88cca975",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindAllProductPhotosByProductUniqueId"
+							],
+							"query": [
+								{
+									"key": "uniqueId",
+									"value": "5b6c6e1e-e0a0-48bf-ac48-1e7e88cca975"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindCartByBuyerUniqueIdAndProductUniqueId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindCartByBuyerUniqueIdAndProductUniqueId?buyerUniqueId=d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb&productUniqueId=b0482927-61b6-4f75-bfab-d14374a175f2",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindCartByBuyerUniqueIdAndProductUniqueId"
 							],
 							"query": [
 								{
@@ -628,8 +668,8 @@
 									"value": "d1dd4ff9-790a-4fd1-8e34-5b90d625ecbb"
 								},
 								{
-									"key": "productId",
-									"value": "3"
+									"key": "productUniqueId",
+									"value": "b0482927-61b6-4f75-bfab-d14374a175f2"
 								}
 							]
 						}

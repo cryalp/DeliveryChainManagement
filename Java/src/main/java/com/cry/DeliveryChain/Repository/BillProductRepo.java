@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-
 import com.cry.DeliveryChain.Entity.BillProduct;
 
 public interface BillProductRepo extends CrudRepository<BillProduct, Long> {

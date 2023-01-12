@@ -33,6 +33,62 @@ $(document).ready(() => {
         window.location.replace("/Login/Logout");
     });
 
+
+    let customSliderIndex = 1;
+    const showDivs = (nThCustomSlider) => {
+        let counter;
+        let customSliderList = document.getElementsByClassName('customSlider w-32rem');
+        if (nThCustomSlider > customSliderList.length) {
+            customSliderIndex = 1
+        }
+        if (nThCustomSlider < 1) {
+            customSliderIndex = customSliderList.length
+        }
+        for (counter = 0; counter < customSliderList.length; counter++) {
+            customSliderList[counter].style.display = "none";
+        }
+        customSliderList[customSliderIndex - 1].style.display = "block";
+    }
+
+    const plusDivs = (nThCustomSlider) => {
+        showDivs(customSliderIndex += nThCustomSlider);
+    }
+
+    $('a[data-name="inspectProduct"]').on("click", (e) => {
+        uniqueId = e.currentTarget.getAttribute("td-uniqueId");
+        let row = $('#' + uniqueId);
+        const header = row.children()[0].children[0].innerHTML;
+        const description = row.children()[1].innerHTML;
+        const price = row.children()[2].innerHTML;
+        const additionDate = new Date($(row.children()[3]).attr("data-additionDate")).toLocaleString("sv-SE", { timeZone: "Europe/Istanbul" });
+        const photoList = $(row.children()[4].children);
+
+        $('#inspectHeader').html(header);
+        $('#inspectDescription').html(description);
+        $('#inspectPrice').html(price);
+        $('#inspectAdditionDate').html(additionDate);
+
+        $('#inspectPhotoList').html("");
+        const customSliderLeft = $('<a href="#customSliderLeft" type="button" data-name="customSliderLeft" class="sliderButton-display-left">');
+        customSliderLeft.click(() => {
+            plusDivs(-1)
+        });
+        customSliderLeft.html("&#10094;");
+        customSliderLeft.appendTo('#inspectPhotoList');
+        const customSliderRight = $('<a href="#customSliderRight" type="button" data-name="customSliderRight" class="sliderButton-display-right">');
+        customSliderRight.click(() => {
+            plusDivs(1)
+        });
+        customSliderRight.html("&#10095;");
+        customSliderRight.appendTo('#inspectPhotoList');
+        for (let counter = 0; counter < photoList.length; counter++) {
+            const img = $('<img class="customSlider w-32rem" alt="#">');
+            img.attr('src', photoList[counter].src);
+            img.appendTo('#inspectPhotoList');
+        }
+        showDivs(customSliderIndex);
+    });
+
     let uniqueId = null;
     $('a[data-name="productBuy"]').on("click", (e) => {
         uniqueId = e.currentTarget.getAttribute("td-uniqueId");

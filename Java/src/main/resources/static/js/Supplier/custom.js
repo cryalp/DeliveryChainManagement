@@ -29,7 +29,69 @@ $(document).ready(() => {
         window.location.replace("/Login/Logout");
     });
 
-    let photoFile = null;
+    let customSliderIndex = 1;
+    const showDivs = (nThCustomSlider) => {
+        let counter;
+        let customSliderList = document.getElementsByClassName('customSlider w-32rem');
+        if (nThCustomSlider > customSliderList.length) {
+            customSliderIndex = 1
+        }
+        if (nThCustomSlider < 1) {
+            customSliderIndex = customSliderList.length
+        }
+        for (counter = 0; counter < customSliderList.length; counter++) {
+            customSliderList[counter].style.display = "none";
+        }
+        customSliderList[customSliderIndex - 1].style.display = "block";
+    }
+
+    const plusDivs = (nThCustomSlider) => {
+        showDivs(customSliderIndex += nThCustomSlider);
+    }
+
+    $('a[data-name="inspectProduct"]').on("click", (e) => {
+        uniqueId = e.currentTarget.getAttribute("td-uniqueId");
+        let row = $('#' + uniqueId);
+        const header = row.children()[0].children[0].innerHTML;
+        const description = row.children()[1].innerHTML;
+        const price = row.children()[2].innerHTML;
+        const quantity = row.children()[3].innerHTML;
+        const additionDate = new Date($(row.children()[4]).attr("data-additionDate")).toLocaleString("sv-SE", { timeZone: "Europe/Istanbul" });
+        const photoList = $(row.children()[5].children);
+        const isActive = row.children()[6].children[0].checked;
+
+        $('#inspectHeader').html(header);
+        $('#inspectDescription').html(description);
+        $('#inspectPrice').html(price);
+        $('#inspectQuantity').html(quantity);
+        $('#inspectAdditionDate').html(additionDate);
+
+        $('#inspectPhotoList').html("");
+        const customSliderLeft = $('<a href="#customSliderLeft" type="button" data-name="customSliderLeft" class="sliderButton-display-left">');
+        customSliderLeft.click(() => {
+            plusDivs(-1)
+        });
+        customSliderLeft.html("&#10094;");
+        customSliderLeft.appendTo('#inspectPhotoList');
+        const customSliderRight = $('<a href="#customSliderRight" type="button" data-name="customSliderRight" class="sliderButton-display-right">');
+        customSliderRight.click(() => {
+            plusDivs(1)
+        });
+        customSliderRight.html("&#10095;");
+        customSliderRight.appendTo('#inspectPhotoList');
+        for (let counter = 0; counter < photoList.length; counter++) {
+            const img = $('<img class="customSlider w-32rem" alt="#">');
+            img.attr('src', photoList[counter].src);
+            img.appendTo('#inspectPhotoList');
+        }
+        showDivs(customSliderIndex);
+
+        if (isActive) {
+            $('#inspectIsActive').attr("checked", "checked");
+        }
+    });
+
+    let photoFiles = null;
     $("#addPhotoImg").click(() => {
         $("#addPhoto").trigger("click");
     });
@@ -41,7 +103,7 @@ $(document).ready(() => {
                 $('#addPhotoImg').attr('src', e.target.result);
             };
             reader.readAsDataURL(evt.currentTarget.files[0]);
-            photoFile = evt.currentTarget.files[0];
+            photoFiles = evt.currentTarget.files;
         }
     });
 
@@ -53,7 +115,9 @@ $(document).ready(() => {
         formData.append("Price", $('#addPrice').val());
         formData.append("Quantity", $('#addQuantity').val());
         formData.append("AdditionDate", $('#addAdditionDate').val());
-        formData.append("Photo", photoFile);
+        Array.from(photoFiles).forEach(photo => {
+            formData.append("PhotoList", photo);
+        });
         formData.append("IsActive", $('#addIsActive').prop("checked"))
 
         $.ajax({
@@ -69,7 +133,7 @@ $(document).ready(() => {
                     alertModal.modal('show');
                     setTimeout(() => {
                         alertModal.modal('hide');
-                        window.location.replace("/");
+                        window.location.replace("/Supplier?Notification=Ürün başarılı bir şekilde eklendi.");
                     }, 1500);
                 } else {
                     $('#alertFailModal').modal('show');
@@ -90,6 +154,7 @@ $(document).ready(() => {
                 $('#editPhotoImg').attr('src', e.target.result);
             };
             reader.readAsDataURL(element.currentTarget.files[0]);
+            photoFiles = element.currentTarget.files;
         }
     });
 
@@ -101,12 +166,13 @@ $(document).ready(() => {
     $('a[data-name="productEdit"]').on("click", (e) => {
         uniqueId = e.currentTarget.getAttribute("td-uniqueId");
         let row = $('#' + uniqueId);
-        const header = row.children()[0].innerHTML;
+        const header = row.children()[0].children[0].innerHTML;
         const description = row.children()[1].innerHTML;
         const price = row.children()[2].innerHTML;
         const quantity = row.children()[3].innerHTML;
         const additionDate = new Date($(row.children()[4]).attr("data-additionDate")).toLocaleString("sv-SE", { timeZone: "Europe/Istanbul" }).replace(' ', 'T');
         const photo = row.children()[5].children[0].src;
+        const photoList = $(row.children()[5].children);
         const isActive = row.children()[6].children[0].checked;
 
         $('#editHeader').val(header);
@@ -116,6 +182,27 @@ $(document).ready(() => {
         $('#editAdditionDate').val(additionDate);
         $('#editPhoto').attr('value', photo);
         $('#editPhotoImg').attr('src', photo);
+
+        $('#inspectEditPhotoList').html("");
+        const customSliderLeft = $('<a href="#customSliderLeft" type="button" data-name="customSliderLeft" class="sliderButton-display-left">');
+        customSliderLeft.click(() => {
+            plusDivs(-1)
+        });
+        customSliderLeft.html("&#10094;");
+        customSliderLeft.appendTo('#inspectEditPhotoList');
+        const customSliderRight = $('<a href="#customSliderRight" type="button" data-name="customSliderRight" class="sliderButton-display-right">');
+        customSliderRight.click(() => {
+            plusDivs(1)
+        });
+        customSliderRight.html("&#10095;");
+        customSliderRight.appendTo('#inspectEditPhotoList');
+        for (let counter = 0; counter < photoList.length; counter++) {
+            const img = $('<img class="customSlider w-32rem" alt="#">');
+            img.attr('src', photoList[counter].src);
+            img.appendTo('#inspectEditPhotoList');
+        }
+        showDivs(customSliderIndex);
+
         if (isActive) {
             $('#editIsActive').attr("checked", "checked");
         }
@@ -128,8 +215,11 @@ $(document).ready(() => {
         postedFormData.append("UniqueId", uniqueId)
 
         const photoDataURL = $('#editPhoto')[0].defaultValue;
-        const profilePhotoFile = dataURLtoFile(photoDataURL, 'hello.png');
-        postedFormData.set("Photo", profilePhotoFile)
+
+        Array.from(photoFiles).forEach(photo => {
+            console.log(photo)
+            postedFormData.append("PhotoList", photo);
+        });
 
         const newIsActive = $('#editIsActive').prop("checked");
         postedFormData.set("IsActive", newIsActive);
@@ -201,6 +291,9 @@ $(document).ready(() => {
                     }, 1500);
                 } else {
                     $('#alertFailModal').modal('show');
+                    setTimeout(() => {
+                        window.location.replace("/Supplier/?Notification=Daha önceden faturalandırılmış ürün silinemez.");
+                    }, 1500);
                 }
             },
             error: () => {
