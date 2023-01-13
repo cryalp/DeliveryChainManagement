@@ -125,6 +125,28 @@ public class RESTService {
         }
     }
 
+    @RequestMapping(value = "/FindAllProductsByIsActive", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Product> FindAllProductsByIsActive(Boolean isActive) {
+        try {
+            return productRepo.findAllByIsActive(isActive);
+        }
+        catch (Exception e) {
+            return new ArrayList<Product>();
+        }
+    }
+
+    @RequestMapping(value = "/FindAllProductsByLessQuantity", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Product> FindAllProductsByLessQuantity(Integer quantity) {
+        try {
+            return productRepo.findAllByLessQuantity(quantity);
+        }
+        catch (Exception e) {
+            return new ArrayList<Product>();
+        }
+    }
+
     @RequestMapping(value = "/FindAllProductsByIsActiveAndQuantity", method = RequestMethod.GET)
     @ResponseBody
     public List<Product> FindAllProductsByIsActiveAndQuantity(Boolean isActive, Integer quantity) {
@@ -233,6 +255,15 @@ public class RESTService {
         }
     }
 
+    public void DeleteBill(Bill bill) {
+        try {
+            billRepo.delete(bill);
+        }
+        catch (Exception e) {
+            _functions.Logger(e);
+        }
+    }
+
     @RequestMapping(value = "/FindBillByUniqueId", method = RequestMethod.GET)
     @ResponseBody
     public Bill FindBillByUniqueId(HttpSession httpSession, String uniqueId) {
@@ -266,6 +297,15 @@ public class RESTService {
     public void SaveBillProduct(BillProduct billProduct) {
         try {
             billProductRepo.save(billProduct);
+        }
+        catch (Exception e) {
+            _functions.Logger(e);
+        }
+    }
+
+    public void DeleteBillProduct(BillProduct billProduct) {
+        try {
+            billProductRepo.delete(billProduct);
         }
         catch (Exception e) {
             _functions.Logger(e);

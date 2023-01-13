@@ -19,6 +19,9 @@ public interface ProductRepo extends CrudRepository<Product, Long> {
     @Query("FROM Product WHERE IsActive = :IsActive")
     List<Product> findAllByIsActive(Boolean IsActive);
 
+    @Query("FROM Product WHERE Quantity < :Quantity")
+    List<Product> findAllByLessQuantity(Integer Quantity);
+
     @Query("FROM Product WHERE IsActive = :IsActive AND Quantity >= :Quantity")
     List<Product> findAllByIsActiveAndQuantity(Boolean IsActive, Integer Quantity);
 

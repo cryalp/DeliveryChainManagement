@@ -27,6 +27,9 @@
                             <th>
                                 <a data-name="orderApprove" th:td-uniqueId="${unApprovedBillMap.value[0].Bill.UniqueId}" type="button" class="btn btn-success">Onayla</a>
                             </th>
+                            <th>
+                                <a data-name="orderReject" th:td-uniqueId="${unApprovedBillMap.value[0].Bill.UniqueId}" type="button" class="btn btn-success">Reddet</a>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,7 +41,7 @@
                             <td th:text="${#temporals.format(unApprovedBill.Bill.CreationDate, 'dd-MM-yyyy hh:mm')}"
                                 th:attr="data-additionDate=${#temporals.format(unApprovedBill.Bill.CreationDate, 'yyyy-MM-dd hh:mm:ss')}">
                             </td>
-                            <td colspan="3">
+                            <td colspan="4">
                                 <img th:each="productPhoto : ${unApprovedBill.Product.PhotoList}" th:src="${productPhoto.Photo}" th:alt="${unApprovedBill.Product.Header}"
                                     width="32px" />
                             </td>
@@ -82,8 +85,7 @@
                                 th:attr="data-additionDate=${#temporals.format(bill.Bill.CreationDate, 'yyyy-MM-dd hh:mm:ss')}">
                             </td>
                             <td colspan="3">
-                                <img th:each="productPhoto : ${bill.Product.PhotoList}" th:src="${productPhoto.Photo}" th:alt="${bill.Product.Header}"
-                                    width="32px" />
+                                <img th:each="productPhoto : ${bill.Product.PhotoList}" th:src="${productPhoto.Photo}" th:alt="${bill.Product.Header}" width="32px" />
                             </td>
                         </tr>
                     </tbody>

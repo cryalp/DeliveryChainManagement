@@ -57,7 +57,7 @@ public class SupplierController {
                 product.setPhotoList(restService.FindAllProductPhotosByProductUniqueId(product.UniqueId.toString()));
             }
 
-            model.addAttribute("title", "Sipariş Yönet");
+            model.addAttribute("title", "Ürün Yönet");
             model.addAttribute("productBase64Photo", productBase64Photo);
             model.addAttribute("productList", productList);
             return "Supplier/Index";
@@ -79,6 +79,7 @@ public class SupplierController {
             var header = httpRequest.getParameter("Header");
             var description = httpRequest.getParameter("Description");
             var price = httpRequest.getParameter("Price");
+            var discount = httpRequest.getParameter("Discount");
             var quantity = httpRequest.getParameter("Quantity");
             var additionDate = httpRequest.getParameter("AdditionDate");
             var photoList = ((MultipartHttpServletRequest) httpRequest).getFiles("PhotoList");
@@ -87,7 +88,8 @@ public class SupplierController {
 
             var currentAdditionDate = LocalDateTime.now().isBefore(LocalDateTime.parse(additionDate)) ? LocalDateTime.now() : LocalDateTime.parse(additionDate);
 
-            var product = new Product(userAccount, header, description, new BigDecimal(price), Integer.parseInt(quantity), currentAdditionDate, true, UUID.randomUUID());
+            var product = new Product(userAccount, header, description, new BigDecimal(price), Float.parseFloat(discount), Integer.parseInt(quantity),
+                    currentAdditionDate, true, UUID.randomUUID());
             restService.SaveProduct(product);
 
             var productPhoto = new ProductPhoto();
@@ -121,6 +123,7 @@ public class SupplierController {
             var header = httpRequest.getParameter("Header");
             var description = httpRequest.getParameter("Description");
             var price = httpRequest.getParameter("Price");
+            var discount = httpRequest.getParameter("Discount");
             var quantity = httpRequest.getParameter("Quantity");
             var additionDate = httpRequest.getParameter("AdditionDate");
             var photoList = ((MultipartHttpServletRequest) httpRequest).getFiles("PhotoList");
@@ -135,22 +138,17 @@ public class SupplierController {
             product.Header = header;
             product.Description = description;
             product.Price = new BigDecimal(price);
+            product.Discount = Float.parseFloat(discount);
             product.Quantity = Integer.parseInt(quantity);
             product.AdditionDate = LocalDateTime.parse(additionDate);
             product.IsActive = Boolean.parseBoolean(isActive);
 
             restService.SaveProduct(product);
 
-            var productPhoto = new ProductPhoto();
-            if (photoList.isEmpty()) {
-                productPhoto = new ProductPhoto(product, productBase64Photo, UUID.randomUUID());
+            for (var photo : photoList) {
+                var photoBase64 = "data:" + photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(photo.getBytes()));
+                var productPhoto = new ProductPhoto(product, photoBase64, UUID.randomUUID());
                 restService.SaveProductPhoto(productPhoto);
-            } else {
-                for (var photo : photoList) {
-                    var photoBase64 = "data:" + photo.getContentType() + ";base64," + new String(Base64.getEncoder().encode(photo.getBytes()));
-                    productPhoto = new ProductPhoto(product, photoBase64, UUID.randomUUID());
-                    restService.SaveProductPhoto(productPhoto);
-                }
             }
 
             return true;
@@ -259,6 +257,52 @@ public class SupplierController {
 
             bill.IsApproved = true;
             restService.SaveBill(bill);
+
+            return bill.UniqueId.toString();
+        }
+        catch (Exception e) {
+            _functions.Logger(e.getMessage());
+            return "Sipariş onaylanırken hata ile karşılaşıldı.";
+        }
+    }
+
+    @RequestMapping(value = "/OrderReject", method = RequestMethod.POST)
+    @ResponseBody
+    public String SupplierOrderReject(HttpSession httpSession, HttpServletRequest httpRequest) {
+        try {
+            if (!loginController.IsLoggedIn(httpSession)) {
+                return "redirect:/Login/";
+            }
+
+            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+
+            var billUniqueId = httpRequest.getParameter("UniqueId");
+
+            var bill = restService.FindBillByUniqueId(httpSession, billUniqueId);
+            if (bill == null) {
+                return "Fatura bulunamadı.";
+            }
+            if (bill.IsApproved) {
+                return "Bu fatura önceden onaylanmış. Artık silinemez.";
+            }
+
+            var billProductList = restService.FindAllBillProductsByBillUniqueId(httpSession, bill.UniqueId.toString());
+            if (billProductList.get(0).Supplier.Id != userAccount.Id) {
+                return "Bu faturayı silemezsiniz.";
+            }
+
+            if (billProductList.size() < 0) {
+                return "Faturaya ait ürün bulunamadı.";
+            }
+
+            for (var billProduct : billProductList) {
+                var product = billProduct.Product;
+                product.Quantity += billProduct.Quantity;
+                restService.SaveProduct(product);
+                restService.DeleteBillProduct(billProduct);
+            }
+
+            restService.DeleteBill(bill);
 
             return bill.UniqueId.toString();
         }

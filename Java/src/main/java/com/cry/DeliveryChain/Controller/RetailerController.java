@@ -60,6 +60,34 @@ public class RetailerController {
         }
     }
 
+    @RequestMapping(value = "/OutOfStock", method = RequestMethod.GET)
+    public String OutOfStock(HttpSession httpSession, Model model, HttpServletRequest httpRequest) {
+        try {
+            if (!loginController.IsLoggedIn(httpSession)) {
+                return "redirect:/Login/";
+            }
+
+            var notification = httpRequest.getParameter("Notification");
+            if (notification != null && notification.length() > 64) {
+                notification = notification.substring(0, 64);
+            }
+            model.addAttribute("Notification", notification);
+
+            var productList = restService.FindAllProductsByLessQuantity(1);
+            for (var product : productList) {
+                product.setPhotoList(restService.FindAllProductPhotosByProductUniqueId(product.UniqueId.toString()));
+            }
+
+            model.addAttribute("title", "Stok Dışı Ürünler");
+            model.addAttribute("productList", productList);
+            return "Retailer/OutOfStock";
+        }
+        catch (Exception e) {
+            _functions.Logger(e.getMessage());
+            return "redirect:/Login/";
+        }
+    }
+
     @RequestMapping(value = "Retailer/AddToCart", method = RequestMethod.POST)
     @ResponseBody
     public String RetailerAddToCart(HttpSession httpSession, HttpServletRequest httpRequest) {
@@ -194,20 +222,17 @@ public class RetailerController {
                 return "Sepet boş";
             }
 
-            for (var cart : cartList) {
-                var product = restService.FindProductByUniqueId(cart.Product.UniqueId.toString());
-                if (!product.IsActive || product.Quantity < cart.Quantity) {
-                    return "'" + product.Header + "' isimli ürün artık aktif değil.";
-                }
-            }
-
             var bill = new Bill(buyerUserAccount, BigDecimal.valueOf(0), LocalDateTime.now(), false, UUID.randomUUID());
             restService.SaveBill(bill);
 
             for (var cart : cartList) {
                 var product = restService.FindProductByUniqueId(cart.Product.UniqueId.toString());
-                var billProduct = new BillProduct(buyerUserAccount, bill, product, product.Quantity, product.Price);
-                bill.TotalPrice = bill.TotalPrice.add(product.Price.multiply(BigDecimal.valueOf(product.Quantity)));
+                if (!product.IsActive || product.Quantity < cart.Quantity) {
+                    return "'" + product.Header + "' isimli ürün artık aktif değil.";
+                }
+
+                var billProduct = new BillProduct(buyerUserAccount, bill, product, cart.Quantity, product.Price);
+                bill.TotalPrice = bill.TotalPrice.add(product.Price.multiply(BigDecimal.valueOf(cart.Quantity)));
                 restService.SaveBillProduct(billProduct);
 
                 product.Quantity -= cart.Quantity;
@@ -260,6 +285,51 @@ public class RetailerController {
             model.addAttribute("unApprovedBillProductList", unApprovedBillProductList);
 
             return "Retailer/Orders";
+        }
+        catch (Exception e) {
+            _functions.Logger(e.getMessage());
+            return "redirect:/";
+        }
+    }
+
+    @RequestMapping(value = "Retailer/OrderCancel", method = RequestMethod.POST)
+    @ResponseBody
+    public String RetailerOrderCancel(HttpSession httpSession, HttpServletRequest httpRequest) {
+        try {
+            if (!loginController.IsLoggedIn(httpSession)) {
+                return "redirect:/Login/";
+            }
+
+            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+
+            var billUniqueId = httpRequest.getParameter("UniqueId");
+            var bill = restService.FindBillByUniqueId(httpSession, billUniqueId);
+            if (bill == null) {
+                return "Fatura bulunamadı.";
+            }
+            if (bill.IsApproved) {
+                return "Bu fatura önceden onaylanmış. Artık silinemez.";
+            }
+
+            var billProductList = restService.FindAllBillProductsByBillUniqueId(httpSession, bill.UniqueId.toString());
+            if (billProductList.get(0).Supplier.Id != userAccount.Id) {
+                return "Bu faturayı silemezsiniz.";
+            }
+
+            if (billProductList.size() < 0) {
+                return "Faturaya ait ürün bulunamadı.";
+            }
+
+            for (var billProduct : billProductList) {
+                var product = billProduct.Product;
+                product.Quantity += billProduct.Quantity;
+                restService.SaveProduct(product);
+                restService.DeleteBillProduct(billProduct);
+            }
+
+            restService.DeleteBill(bill);
+
+            return bill.UniqueId.toString();
         }
         catch (Exception e) {
             _functions.Logger(e.getMessage());

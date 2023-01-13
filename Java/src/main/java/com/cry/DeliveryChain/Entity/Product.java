@@ -40,6 +40,9 @@ public class Product {
     @Column(name = "Price")
     public BigDecimal Price;
 
+    @Column(name = "Discount")
+    public Float Discount;
+
     @Column(name = "Quantity")
     public Integer Quantity;
 
@@ -59,12 +62,13 @@ public class Product {
 
     public Product() {}
 
-    public Product(UserAccount UserAccount, String Header, String Description, BigDecimal Price, Integer Quantity, LocalDateTime AdditionDate, Boolean IsActive,
-            UUID UniqueId) {
+    public Product(UserAccount UserAccount, String Header, String Description, BigDecimal Price, Float Discount, Integer Quantity, LocalDateTime AdditionDate,
+            Boolean IsActive, UUID UniqueId) {
         this.UserAccount = UserAccount;
         this.Header = Header;
         this.Description = Description;
         this.Price = Price;
+        this.Discount = Discount;
         this.Quantity = Quantity;
         this.AdditionDate = AdditionDate;
         this.IsActive = IsActive;

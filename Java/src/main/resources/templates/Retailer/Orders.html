@@ -9,6 +9,45 @@
     <section layout:fragment="content" class="content container-fluid my-md-4">
         <div class="row">
             <main id="main" class="transition-500 col-md-12">
+                <table th:if="${unApprovedBillProductList.size > 1 && !unApprovedBillList.empty}" th:each="unApprovedBillList : ${unApprovedBillProductList}"
+                    class="table table-striped table-hover w-100">
+                    <thead>
+                        <tr class="table-primary">
+                            <th>Başlık</th>
+                            <th>Satıcı</th>
+                            <th>Fiyat</th>
+                            <th>Adet</th>
+                            <th>Fatura Tarihi</th>
+                            <th>Fotoğraf</th>
+                            <th th:text="'Toplam - ' + ${#numbers.formatDecimal(unApprovedBillList[0].Bill.TotalPrice, 0, 'DEFAULT', 2, 'DEFAULT')} + '₺'"
+                                class="text-nowrap">
+                            </th>
+                            <th>
+                                <a data-name="orderCancel" th:td-uniqueId="${unApprovedBillList[0].Bill.UniqueId}" type="button" class="btn btn-success text-nowrap">
+                                    İptal Et
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="unApprovedBillProduct : ${unApprovedBillList}" th:id="${unApprovedBillProduct.Bill.UniqueId}">
+                            <td th:text="${unApprovedBillProduct.Product.Header}" class="text-nowrap"></td>
+                            <td th:text="${unApprovedBillProduct.Supplier.Username}"></td>
+                            <td th:text="${#numbers.formatDecimal(unApprovedBillProduct.CurrentPrice, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+                            <td th:text="${unApprovedBillProduct.Quantity}"></td>
+                            <td th:text="${#temporals.format(unApprovedBillProduct.Bill.CreationDate, 'dd-MM-yyyy hh:mm')}"
+                                th:attr="data-additionDate=${#temporals.format(unApprovedBillProduct.Bill.CreationDate, 'yyyy-MM-dd hh:mm:ss')}">
+                            </td>
+                            <td colspan="3">
+                                <img th:each="productPhoto : ${unApprovedBillProduct.Product.PhotoList}" th:src="${productPhoto.Photo}"
+                                    th:alt="${unApprovedBillProduct.Product.Header}" width="32px" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div th:if="${unApprovedBillProductList.size > 1}" class="mb-2">
+                    <p class="fs-3 text-warning text-center">Yukarıda siparişler henüz onaylanmadı. Ancak stok sizin için ayırıldı.</p>
+                </div>
                 <table th:each="billList : ${billProductList}" class="table table-striped table-hover w-100">
                     <thead>
                         <tr class="table-primary">
@@ -44,41 +83,6 @@
                             <td colspan="2">
                                 <img th:each="productPhoto : ${billProduct.Product.PhotoList}" th:src="${productPhoto.Photo}" th:alt="${billProduct.Product.Header}"
                                     width="32px" />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div th:if="${unApprovedBillProductList.size > 1}" class="mb-2">
-                    <p class="fs-3 text-warning text-center">Aşağıdaki siparişler henüz onaylanmadı. Ancak stok sizin için ayırıldı.</p>
-                </div>
-                <table th:if="${unApprovedBillProductList.size > 1}" th:each="unApprovedBillList : ${unApprovedBillProductList}"
-                    class="table table-striped table-hover w-100">
-                    <thead>
-                        <tr class="table-primary">
-                            <th>Başlık</th>
-                            <th>Satıcı</th>
-                            <th>Fiyat</th>
-                            <th>Adet</th>
-                            <th>Fatura Tarihi</th>
-                            <th>Fotoğraf</th>
-                            <th th:if="${!unApprovedBillList.empty}"
-                                th:text="'Toplam - ' + ${#numbers.formatDecimal(unApprovedBillList[0].Bill.TotalPrice, 0, 'DEFAULT', 2, 'DEFAULT')} + '₺'"
-                                class="text-nowrap">
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="unApprovedBillProduct : ${unApprovedBillList}" th:id="${unApprovedBillProduct.Bill.UniqueId}">
-                            <td th:text="${unApprovedBillProduct.Product.Header}" class="text-nowrap"></td>
-                            <td th:text="${unApprovedBillProduct.Supplier.Username}"></td>
-                            <td th:text="${#numbers.formatDecimal(unApprovedBillProduct.CurrentPrice, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
-                            <td th:text="${unApprovedBillProduct.Quantity}"></td>
-                            <td th:text="${#temporals.format(unApprovedBillProduct.Bill.CreationDate, 'dd-MM-yyyy hh:mm')}"
-                                th:attr="data-additionDate=${#temporals.format(unApprovedBillProduct.Bill.CreationDate, 'yyyy-MM-dd hh:mm:ss')}">
-                            </td>
-                            <td colspan="2">
-                                <img th:each="productPhoto : ${unApprovedBillProduct.Product.PhotoList}" th:src="${productPhoto.Photo}"
-                                    th:alt="${unApprovedBillProduct.Product.Header}" width="32px" />
                             </td>
                         </tr>
                     </tbody>

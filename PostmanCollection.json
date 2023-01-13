@@ -582,6 +582,52 @@
 					"response": []
 				},
 				{
+					"name": "FindAllProductsByIsActive",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindAllProductsByIsActive?isActive=true",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindAllProductsByIsActive"
+							],
+							"query": [
+								{
+									"key": "isActive",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FindAllProductsByLessQuantity",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindAllProductsByLessQuantity?quantity=1",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindAllProductsByLessQuantity"
+							],
+							"query": [
+								{
+									"key": "quantity",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "FindAllProductsByIsActiveAndQuantity",
 					"request": {
 						"method": "GET",

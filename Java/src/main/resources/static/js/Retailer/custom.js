@@ -17,6 +17,11 @@ $(document).ready(() => {
         window.location.replace("/");
     });
 
+    $('#outOfStockRedirect').on("click", () => {
+        window.location.replace("/OutOfStock");
+    });
+
+
     $('#sideBarRedirectToCart').on("click", () => {
         window.location.replace("/Retailer/CheckOut");
     });
@@ -35,9 +40,9 @@ $(document).ready(() => {
 
 
     let customSliderIndex = 1;
-    const showDivs = (nThCustomSlider) => {
+    const showDivs = (sliderModal, nThCustomSlider) => {
         let counter;
-        let customSliderList = document.getElementsByClassName('customSlider w-32rem');
+        let customSliderList = document.querySelectorAll("[data-sliderModal='" + sliderModal + "']")
         if (nThCustomSlider > customSliderList.length) {
             customSliderIndex = 1
         }
@@ -50,8 +55,8 @@ $(document).ready(() => {
         customSliderList[customSliderIndex - 1].style.display = "block";
     }
 
-    const plusDivs = (nThCustomSlider) => {
-        showDivs(customSliderIndex += nThCustomSlider);
+    const plusDivs = (sliderModal, nThCustomSlider) => {
+        showDivs(sliderModal, customSliderIndex += nThCustomSlider);
     }
 
     $('a[data-name="inspectProduct"]').on("click", (e) => {
@@ -62,6 +67,7 @@ $(document).ready(() => {
         const price = row.children()[2].innerHTML;
         const additionDate = new Date($(row.children()[3]).attr("data-additionDate")).toLocaleString("sv-SE", { timeZone: "Europe/Istanbul" });
         const photoList = $(row.children()[4].children);
+        const discount = row.children()[5].innerHTML;
 
         $('#inspectHeader').html(header);
         $('#inspectDescription').html(description);
@@ -69,24 +75,26 @@ $(document).ready(() => {
         $('#inspectAdditionDate').html(additionDate);
 
         $('#inspectPhotoList').html("");
-        const customSliderLeft = $('<a href="#customSliderLeft" type="button" data-name="customSliderLeft" class="sliderButton-display-left">');
+        const customSliderLeft = $('<a href="#customSliderLeft" type="button" class="sliderButton-display-left">');
         customSliderLeft.click(() => {
-            plusDivs(-1)
+            plusDivs('inspect', -1)
         });
         customSliderLeft.html("&#10094;");
         customSliderLeft.appendTo('#inspectPhotoList');
-        const customSliderRight = $('<a href="#customSliderRight" type="button" data-name="customSliderRight" class="sliderButton-display-right">');
+        const customSliderRight = $('<a href="#customSliderRight" type="button" class="sliderButton-display-right">');
         customSliderRight.click(() => {
-            plusDivs(1)
+            plusDivs('inspect', 1)
         });
         customSliderRight.html("&#10095;");
         customSliderRight.appendTo('#inspectPhotoList');
         for (let counter = 0; counter < photoList.length; counter++) {
-            const img = $('<img class="customSlider w-32rem" alt="#">');
+            const img = $('<img class="customSlider w-32rem" data-sliderModal="inspect" alt="#">');
             img.attr('src', photoList[counter].src);
             img.appendTo('#inspectPhotoList');
         }
-        showDivs(customSliderIndex);
+        showDivs('inspect', customSliderIndex);
+
+        $('#inspectDiscount').html(discount);
     });
 
     let uniqueId = null;
@@ -98,14 +106,36 @@ $(document).ready(() => {
         const price = row.children()[2].innerHTML;
         const quantity = 1;
         const additionDate = new Date($(row.children()[3]).attr("data-additionDate")).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" });
-        const photo = row.children()[4].children[0].src;
+        const photoList = $(row.children()[4].children);
+        const discount = row.children()[5].innerHTML;
 
         $('#buyHeader').html(header);
         $('#buyDescription').html(description);
         $('#buyPrice').html(price);
         $('#buyQuantity').val(quantity);
         $('#buyAdditionDate').html(additionDate);
-        $('#buyPhotoImg').attr('src', photo);
+
+        $('#buyPhotoList').html("");
+        const customSliderLeft = $('<a href="#customSliderLeft" type="button" class="sliderButton-display-left">');
+        customSliderLeft.click(() => {
+            plusDivs('buy', -1)
+        });
+        customSliderLeft.html("&#10094;");
+        customSliderLeft.appendTo('#buyPhotoList');
+        const customSliderRight = $('<a href="#customSliderRight" type="button" class="sliderButton-display-right">');
+        customSliderRight.click(() => {
+            plusDivs('buy', 1)
+        });
+        customSliderRight.html("&#10095;");
+        customSliderRight.appendTo('#buyPhotoList');
+        for (let counter = 0; counter < photoList.length; counter++) {
+            const img = $('<img class="customSlider w-32rem" data-sliderModal="buy"  alt="#">');
+            img.attr('src', photoList[counter].src);
+            img.appendTo('#buyPhotoList');
+        }
+        showDivs('buy', customSliderIndex);
+
+        $('#buyDiscount').html(discount);
     });
 
     $('#buyProductSubmit').on("click", () => {
@@ -148,6 +178,35 @@ $(document).ready(() => {
         window.location.replace("/Retailer/CheckOut");
     });
 
+    $('a[data-name="removeFromCart"]').on('click', (e) => {
+        $.ajax({
+            url: '/Retailer/RemoveFromCart',
+            type: 'POST',
+            data: $.param({ UniqueId: e.currentTarget.getAttribute("td-uniqueId"), }),
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: (response) => {
+                if (response.length === 36) {
+                    const alertModal = $('#alertSuccessModal');
+                    alertModal.modal('show');
+                    window.location.replace("/Retailer/CheckOut?Notification=Sepetten başarılı bir şekilde silindi.");
+                    setTimeout(() => {
+                        alertModal.modal('hide');
+                    }, 1500);
+                } else {
+                    const alertModal = $('#alertFailModal');
+                    alertModal.modal('show');
+                    setTimeout(() => {
+                        alertModal.modal('hide');
+                    }, 1500);
+                    window.location.replace("/Retailer/CheckOut?Notification=" + response);
+                }
+            },
+            error: () => {
+                $('#alertFailModal').modal('show');
+            }
+        });
+    });
+
     $('#checkOutPOST').on("click", () => {
         $.ajax({
             url: '/Retailer/CheckOutPOST',
@@ -178,27 +237,24 @@ $(document).ready(() => {
         });
     });
 
-    $('a[data-name="removeFromCart"]').on('click', (e) => {
+
+    $('a[data-name="orderCancel"]').on("click", (e) => {
+        let uniqueId = e.currentTarget.getAttribute("td-uniqueId");
         $.ajax({
-            url: '/Retailer/RemoveFromCart',
+            url: '/Retailer/OrderCancel',
             type: 'POST',
-            data: $.param({ UniqueId: e.currentTarget.getAttribute("td-uniqueId"), }),
+            data: $.param({ UniqueId: uniqueId }),
             contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
             success: (response) => {
                 if (response.length === 36) {
                     const alertModal = $('#alertSuccessModal');
                     alertModal.modal('show');
-                    window.location.replace("/Retailer/CheckOut?Notification=Sepetten başarılı bir şekilde silindi.");
                     setTimeout(() => {
-                        alertModal.modal('hide');
+                        alertModal.modal('hide')
                     }, 1500);
+                    window.location.replace("/Retailer/Orders?Notification=Sipariş başarılı bir şekilde iptal edildi.");
                 } else {
-                    const alertModal = $('#alertFailModal');
-                    alertModal.modal('show');
-                    setTimeout(() => {
-                        alertModal.modal('hide');
-                    }, 1500);
-                    window.location.replace("/Retailer/CheckOut?Notification=" + response);
+                    $('#alertFailModal').modal('show');
                 }
             },
             error: () => {

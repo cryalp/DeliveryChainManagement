@@ -38,6 +38,11 @@ CREATE TABLE Product
     UniqueId      UNIQUEIDENTIFIER NOT NULL
 )
 GO
+ALTER TABLE Product
+ADD Discount FLOAT NOT NULL
+DEFAULT 0
+GO
+
 INSERT INTO Product
     (UserAccountId, Header, Description, Price, Quantity, AdditionDate, Photo, IsActive, UniqueId)
 VALUES

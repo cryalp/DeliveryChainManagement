@@ -30,9 +30,9 @@ $(document).ready(() => {
     });
 
     let customSliderIndex = 1;
-    const showDivs = (nThCustomSlider) => {
+    const showDivs = (sliderModal, nThCustomSlider) => {
         let counter;
-        let customSliderList = document.getElementsByClassName('customSlider w-32rem');
+        let customSliderList = document.querySelectorAll("[data-sliderModal='" + sliderModal + "']")
         if (nThCustomSlider > customSliderList.length) {
             customSliderIndex = 1
         }
@@ -45,8 +45,8 @@ $(document).ready(() => {
         customSliderList[customSliderIndex - 1].style.display = "block";
     }
 
-    const plusDivs = (nThCustomSlider) => {
-        showDivs(customSliderIndex += nThCustomSlider);
+    const plusDivs = (sliderModal, nThCustomSlider) => {
+        showDivs(sliderModal, customSliderIndex += nThCustomSlider);
     }
 
     $('a[data-name="inspectProduct"]').on("click", (e) => {
@@ -55,36 +55,38 @@ $(document).ready(() => {
         const header = row.children()[0].children[0].innerHTML;
         const description = row.children()[1].innerHTML;
         const price = row.children()[2].innerHTML;
-        const quantity = row.children()[3].innerHTML;
-        const additionDate = new Date($(row.children()[4]).attr("data-additionDate")).toLocaleString("sv-SE", { timeZone: "Europe/Istanbul" });
-        const photoList = $(row.children()[5].children);
-        const isActive = row.children()[6].children[0].checked;
+        const discount = row.children()[3].innerHTML;
+        const quantity = row.children()[4].innerHTML;
+        const additionDate = new Date($(row.children()[5]).attr("data-additionDate")).toLocaleString("sv-SE", { timeZone: "Europe/Istanbul" });
+        const photoList = $(row.children()[6].children);
+        const isActive = row.children()[7].children[0].checked;
 
         $('#inspectHeader').html(header);
         $('#inspectDescription').html(description);
         $('#inspectPrice').html(price);
+        $('#inspectDiscount').html(discount);
         $('#inspectQuantity').html(quantity);
         $('#inspectAdditionDate').html(additionDate);
 
         $('#inspectPhotoList').html("");
-        const customSliderLeft = $('<a href="#customSliderLeft" type="button" data-name="customSliderLeft" class="sliderButton-display-left">');
+        const customSliderLeft = $('<a href="#customSliderLeft" type="button" class="sliderButton-display-left">');
         customSliderLeft.click(() => {
-            plusDivs(-1)
+            plusDivs('inspect', -1)
         });
         customSliderLeft.html("&#10094;");
         customSliderLeft.appendTo('#inspectPhotoList');
-        const customSliderRight = $('<a href="#customSliderRight" type="button" data-name="customSliderRight" class="sliderButton-display-right">');
+        const customSliderRight = $('<a href="#customSliderRight" type="button" class="sliderButton-display-right">');
         customSliderRight.click(() => {
-            plusDivs(1)
+            plusDivs('inspect', 1)
         });
         customSliderRight.html("&#10095;");
         customSliderRight.appendTo('#inspectPhotoList');
         for (let counter = 0; counter < photoList.length; counter++) {
-            const img = $('<img class="customSlider w-32rem" alt="#">');
+            const img = $('<img class="customSlider w-32rem" data-sliderModal="inspect" alt="#">');
             img.attr('src', photoList[counter].src);
             img.appendTo('#inspectPhotoList');
         }
-        showDivs(customSliderIndex);
+        showDivs('inspect', customSliderIndex);
 
         if (isActive) {
             $('#inspectIsActive').attr("checked", "checked");
@@ -151,15 +153,10 @@ $(document).ready(() => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 $('#editPhoto').attr('value', e.target.result);
-                $('#editPhotoImg').attr('src', e.target.result);
             };
             reader.readAsDataURL(element.currentTarget.files[0]);
             photoFiles = element.currentTarget.files;
         }
-    });
-
-    $('#editPhotoImg').on("click", () => {
-        $("#editPhoto").trigger("click");
     });
 
     let uniqueId = null;
@@ -169,39 +166,41 @@ $(document).ready(() => {
         const header = row.children()[0].children[0].innerHTML;
         const description = row.children()[1].innerHTML;
         const price = row.children()[2].innerHTML;
-        const quantity = row.children()[3].innerHTML;
-        const additionDate = new Date($(row.children()[4]).attr("data-additionDate")).toLocaleString("sv-SE", { timeZone: "Europe/Istanbul" }).replace(' ', 'T');
-        const photo = row.children()[5].children[0].src;
-        const photoList = $(row.children()[5].children);
-        const isActive = row.children()[6].children[0].checked;
+        const discount = row.children()[3].innerHTML;
+        const quantity = row.children()[4].innerHTML;
+        const additionDate = new Date($(row.children()[5]).attr("data-additionDate")).toLocaleString("sv-SE", { timeZone: "Europe/Istanbul" }).replace(' ', 'T');
+        const photoList = $(row.children()[6].children);
+        const isActive = row.children()[7].children[0].checked;
 
         $('#editHeader').val(header);
         $('#editDescription').val(description);
-        $('#editPrice').val(price);
+        $('#editPrice').val(price.substring(0, price.length - 1));
+        $('#editDiscount').val(discount.substring(1, discount.length + 1));
         $('#editQuantity').val(quantity);
         $('#editAdditionDate').val(additionDate);
-        $('#editPhoto').attr('value', photo);
-        $('#editPhotoImg').attr('src', photo);
 
-        $('#inspectEditPhotoList').html("");
-        const customSliderLeft = $('<a href="#customSliderLeft" type="button" data-name="customSliderLeft" class="sliderButton-display-left">');
+        $('#editPhotoList').html("");
+        const customSliderLeft = $('<a href="#customSliderLeft" type="button" class="sliderButton-display-left">');
         customSliderLeft.click(() => {
-            plusDivs(-1)
+            plusDivs('edit', -1)
         });
         customSliderLeft.html("&#10094;");
-        customSliderLeft.appendTo('#inspectEditPhotoList');
-        const customSliderRight = $('<a href="#customSliderRight" type="button" data-name="customSliderRight" class="sliderButton-display-right">');
+        customSliderLeft.appendTo('#editPhotoList');
+        const customSliderRight = $('<a href="#customSliderRight" type="button" class="sliderButton-display-right">');
         customSliderRight.click(() => {
-            plusDivs(1)
+            plusDivs('edit', 1)
         });
         customSliderRight.html("&#10095;");
-        customSliderRight.appendTo('#inspectEditPhotoList');
+        customSliderRight.appendTo('#editPhotoList');
         for (let counter = 0; counter < photoList.length; counter++) {
-            const img = $('<img class="customSlider w-32rem" alt="#">');
+            const img = $('<img class="customSlider w-32rem" data-sliderModal="edit" data-editPhoto="editPhoto" alt="#">');
             img.attr('src', photoList[counter].src);
-            img.appendTo('#inspectEditPhotoList');
+            img.click(() => {
+                $("#editPhoto").trigger("click");
+            });
+            img.appendTo('#editPhotoList');
         }
-        showDivs(customSliderIndex);
+        showDivs('edit', customSliderIndex);
 
         if (isActive) {
             $('#editIsActive').attr("checked", "checked");
@@ -214,12 +213,11 @@ $(document).ready(() => {
 
         postedFormData.append("UniqueId", uniqueId)
 
-        const photoDataURL = $('#editPhoto')[0].defaultValue;
-
-        Array.from(photoFiles).forEach(photo => {
-            console.log(photo)
-            postedFormData.append("PhotoList", photo);
-        });
+        if (photoFiles !== null) {
+            Array.from(photoFiles).forEach(photo => {
+                postedFormData.append("PhotoList", photo);
+            });
+        }
 
         const newIsActive = $('#editIsActive').prop("checked");
         postedFormData.set("IsActive", newIsActive);
@@ -228,9 +226,9 @@ $(document).ready(() => {
         const newHeader = formData.find(data => data.name === "Header").value;
         const newDescription = formData.find(data => data.name === "Description").value;
         const newPrice = formData.find(data => data.name === "Price").value;
+        const newDiscount = formData.find(data => data.name === "Discount").value;
         const newQuantity = formData.find(data => data.name === "Quantity").value;
         const newAdditionDate = formData.find(data => data.name === "AdditionDate").value;
-        const newPhoto = photoDataURL;
 
         $.ajax({
             url: '/Supplier/Edit',
@@ -244,17 +242,30 @@ $(document).ready(() => {
                     const alertModal = $('#alertSuccessModal');
                     alertModal.modal('show');
                     setTimeout(() => {
-                        alertModal.modal('hide')
+                        alertModal.modal('hide');
                     }, 1500);
 
                     let row = $('#' + uniqueId);
                     row.children()[0].innerHTML = newHeader;
                     row.children()[1].innerHTML = newDescription;
-                    row.children()[2].innerHTML = newPrice
-                    row.children()[3].innerHTML = newQuantity
-                    row.children()[4].innerHTML = newAdditionDate
-                    row.children()[5].children[0].src = newPhoto
-                    row.children()[6].children[0].checked = newIsActive
+                    row.children()[2].innerHTML = ((newPrice * (100 - newDiscount)) / 100).toFixed(2) + "₺";
+                    row.children()[3].innerHTML = newDiscount;
+                    row.children()[4].innerHTML = newQuantity;
+                    row.children()[5].innerHTML = newAdditionDate;
+
+                    if (photoFiles !== null) {
+                        Array.from(photoFiles).forEach(photo => {
+                            var reader = new FileReader();
+                            reader.readAsDataURL(photo);
+                            reader.onload = function () {
+                                const img = $('<img alt="' + newHeader + '" width="32px">');
+                                img.attr('src', reader.result);
+                                img.appendTo(row.children()[6]);
+                            };
+                        });
+                    }
+
+                    row.children()[7].children[0].checked = newIsActive
                 } else {
                     $('#alertFailModal').modal('show');
                 }
@@ -318,6 +329,31 @@ $(document).ready(() => {
                         alertModal.modal('hide')
                     }, 1500);
                     window.location.replace("/Supplier/Orders?Notification=Sipariş başarılı bir şekilde onaylandı.");
+                } else {
+                    $('#alertFailModal').modal('show');
+                }
+            },
+            error: () => {
+                $('#alertFailModal').modal('show');
+            }
+        });
+    });
+
+    $('a[data-name="orderReject"]').on("click", (e) => {
+        let uniqueId = e.currentTarget.getAttribute("td-uniqueId");
+        $.ajax({
+            url: '/Supplier/OrderReject',
+            type: 'POST',
+            data: $.param({ UniqueId: uniqueId }),
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: (response) => {
+                if (response.length === 36) {
+                    const alertModal = $('#alertSuccessModal');
+                    alertModal.modal('show');
+                    setTimeout(() => {
+                        alertModal.modal('hide')
+                    }, 1500);
+                    window.location.replace("/Supplier/Orders?Notification=Sipariş başarılı bir şekilde red edildi.");
                 } else {
                     $('#alertFailModal').modal('show');
                 }

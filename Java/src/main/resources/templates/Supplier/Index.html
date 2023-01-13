@@ -18,6 +18,7 @@
                             <th>Başlık</th>
                             <th>Açıklama</th>
                             <th>Fiyat</th>
+                            <th>İndirim</th>
                             <th>Miktar</th>
                             <th>Eklenme Tarihi</th>
                             <th>Fotoğraf</th>
@@ -27,7 +28,8 @@
                     </thead>
                     <tbody>
                         <tr th:if="${productList.empty}">
-                            <td colspan="8" class="text-center">Ürün bulunamadı.</td>
+                            <td colspan="9" class="text-center">Ürün bulunamadı.</td>
+                            <td class="d-none"></td>
                             <td class="d-none"></td>
                             <td class="d-none"></td>
                             <td class="d-none"></td>
@@ -43,7 +45,9 @@
                             </td>
                             <td th:text=" ${product.Description}">
                             </td>
-                            <td th:text="${#numbers.formatDecimal(product.Price, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+                            <td th:text="${#numbers.formatDecimal((product.Price * (100 - product.Discount)) / 100, 1, 'DEFAULT', 2, 'DEFAULT') + '₺'}"></td>
+                            <td th:text="${'%' + #numbers.formatDecimal(product.Discount, 1, 'DEFAULT' , 2, 'DEFAULT' )}"
+                                th:attr="class=${product.Discount > 0 ? 'text-danger fw-bold' : ''}"></td>
                             <td th:text="${product.Quantity}"></td>
                             <td th:text="${#temporals.format(product.AdditionDate, 'dd-MM-yyyy hh:mm')}"
                                 th:attr="data-additionDate=${#temporals.format(product.AdditionDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
