@@ -176,6 +176,17 @@ public class RESTService {
         }
     }
 
+    @RequestMapping(value = "/FindProductPhotoByUniqueId", method = RequestMethod.GET)
+    @ResponseBody
+    public ProductPhoto FindProductPhotoByUniqueId(String uniqueId) {
+        try {
+            return productPhotoRepo.findByUniqueId(UUID.fromString(uniqueId));
+        }
+        catch (Exception e) {
+            return new ProductPhoto();
+        }
+    }
+
     @RequestMapping(value = "/FindAllProductPhotos", method = RequestMethod.GET)
     @ResponseBody
     public List<ProductPhoto> FindAllProductPhotos() {

@@ -43,16 +43,18 @@ public class SupplierController {
                 return "redirect:/Login/";
             }
 
+            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            if (!userAccount.AccountType.equals("Supplier")) {
+                return "redirect:/";
+            }
+
             var notification = httpRequest.getParameter("Notification");
             if (notification != null && notification.length() > 64) {
                 notification = notification.substring(0, 64);
             }
             model.addAttribute("Notification", notification);
 
-            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
-
             var productList = restService.FindAllProductsBySupplierUniqueId(userAccount.UniqueId.toString());
-
             for (var product : productList) {
                 product.setPhotoList(restService.FindAllProductPhotosByProductUniqueId(product.UniqueId.toString()));
             }
@@ -76,20 +78,24 @@ public class SupplierController {
                 return "NotLoggedIn";
             }
 
+            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            if (!userAccount.AccountType.equals("Supplier")) {
+                return "redirect:/";
+            }
+
             var header = httpRequest.getParameter("Header");
             var description = httpRequest.getParameter("Description");
             var price = httpRequest.getParameter("Price");
             var discount = httpRequest.getParameter("Discount");
             var quantity = httpRequest.getParameter("Quantity");
             var additionDate = httpRequest.getParameter("AdditionDate");
+            var isActive = httpRequest.getParameter("IsActive");
             var photoList = ((MultipartHttpServletRequest) httpRequest).getFiles("PhotoList");
-
-            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
             var currentAdditionDate = LocalDateTime.now().isBefore(LocalDateTime.parse(additionDate)) ? LocalDateTime.now() : LocalDateTime.parse(additionDate);
 
             var product = new Product(userAccount, header, description, new BigDecimal(price), Float.parseFloat(discount), Integer.parseInt(quantity),
-                    currentAdditionDate, true, UUID.randomUUID());
+                    currentAdditionDate, Boolean.parseBoolean(isActive), UUID.randomUUID());
             restService.SaveProduct(product);
 
             var productPhoto = new ProductPhoto();
@@ -120,6 +126,17 @@ public class SupplierController {
                 return false;
             }
 
+            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            if (!userAccount.AccountType.equals("Supplier")) {
+                return false;
+            }
+
+            var uniqueId = httpRequest.getParameter("UniqueId");
+            var product = restService.FindProductByUniqueId(uniqueId);
+            if (product == null || product.UserAccount.Id != userAccount.Id) {
+                return false;
+            }
+
             var header = httpRequest.getParameter("Header");
             var description = httpRequest.getParameter("Description");
             var price = httpRequest.getParameter("Price");
@@ -127,13 +144,8 @@ public class SupplierController {
             var quantity = httpRequest.getParameter("Quantity");
             var additionDate = httpRequest.getParameter("AdditionDate");
             var photoList = ((MultipartHttpServletRequest) httpRequest).getFiles("PhotoList");
+            var removedPhotoList = httpRequest.getParameterValues("RemovedPhotoList");
             var isActive = httpRequest.getParameter("IsActive");
-            var uniqueId = httpRequest.getParameter("UniqueId");
-
-            var product = restService.FindProductByUniqueId(uniqueId);
-            if (product == null) {
-                return false;
-            }
 
             product.Header = header;
             product.Description = description;
@@ -151,6 +163,21 @@ public class SupplierController {
                 restService.SaveProductPhoto(productPhoto);
             }
 
+            if (removedPhotoList != null) {
+                for (var removedPhotoUniqueId : removedPhotoList) {
+                    var removedPhoto = restService.FindProductPhotoByUniqueId(removedPhotoUniqueId);
+                    if (removedPhoto != null && removedPhoto.Product.UserAccount.Id == userAccount.Id) {
+                        restService.DeleteProductPhoto(removedPhoto);
+                    }
+                }
+            }
+
+            var productPhotoList = restService.FindAllProductPhotosByProductUniqueId(product.UniqueId.toString());
+            if (productPhotoList.isEmpty()) {
+                var productPhoto = new ProductPhoto(product, productBase64Photo, UUID.randomUUID());
+                restService.SaveProductPhoto(productPhoto);
+            }
+
             return true;
         }
         catch (Exception e) {
@@ -161,15 +188,23 @@ public class SupplierController {
 
     @RequestMapping(value = "/Delete", method = RequestMethod.POST)
     @ResponseBody
-    public boolean Delete(HttpSession httpSession, HttpServletRequest httpRequest) {
+    public Boolean Delete(HttpSession httpSession, HttpServletRequest httpRequest) {
         try {
             if (!loginController.IsLoggedIn(httpSession)) {
                 return false;
             }
 
-            var uniqueId = httpRequest.getParameter("UniqueId");
+            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            if (!userAccount.AccountType.equals("Supplier")) {
+                return false;
+            }
 
+            var uniqueId = httpRequest.getParameter("UniqueId");
             var product = restService.FindProductByUniqueId(uniqueId);
+            if (product == null || product.UserAccount.Id != userAccount.Id) {
+                return false;
+            }
+
             var billProductList = restService.FindAllBillProductsByProductUniqueId(httpSession, product.UniqueId.toString());
             if (billProductList.size() > 0) {
                 return false;
@@ -198,13 +233,16 @@ public class SupplierController {
                 return "redirect:/Login/";
             }
 
+            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            if (!userAccount.AccountType.equals("Supplier")) {
+                return "redirect:/";
+            }
+
             var notification = httpRequest.getParameter("Notification");
             if (notification != null && notification.length() > 64) {
                 notification = notification.substring(0, 64);
             }
             model.addAttribute("Notification", notification);
-
-            var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
             var billProductList = restService.FindAllBillProductsBySupplierUniqueId(httpSession, userAccount.UniqueId.toString());
 
@@ -242,9 +280,11 @@ public class SupplierController {
             }
 
             var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            if (!userAccount.AccountType.equals("Supplier")) {
+                return "redirect:/";
+            }
 
             var billUniqueId = httpRequest.getParameter("UniqueId");
-
             var bill = restService.FindBillByUniqueId(httpSession, billUniqueId);
             if (bill == null) {
                 return "Fatura bulunamadı.";
@@ -275,24 +315,27 @@ public class SupplierController {
             }
 
             var userAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
+            if (!userAccount.AccountType.equals("Supplier")) {
+                return "redirect:/";
+            }
 
             var billUniqueId = httpRequest.getParameter("UniqueId");
-
             var bill = restService.FindBillByUniqueId(httpSession, billUniqueId);
             if (bill == null) {
                 return "Fatura bulunamadı.";
             }
-            if (bill.IsApproved) {
-                return "Bu fatura önceden onaylanmış. Artık silinemez.";
-            }
 
             var billProductList = restService.FindAllBillProductsByBillUniqueId(httpSession, bill.UniqueId.toString());
+            if (billProductList.size() <= 0) {
+                return "Faturaya ait ürün bulunamadı.";
+            }
+
             if (billProductList.get(0).Supplier.Id != userAccount.Id) {
                 return "Bu faturayı silemezsiniz.";
             }
 
-            if (billProductList.size() < 0) {
-                return "Faturaya ait ürün bulunamadı.";
+            if (bill.IsApproved) {
+                return "Bu fatura önceden onaylanmış. Artık silinemez.";
             }
 
             for (var billProduct : billProductList) {

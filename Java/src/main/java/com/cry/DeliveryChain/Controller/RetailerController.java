@@ -45,7 +45,6 @@ public class RetailerController {
             model.addAttribute("Notification", notification);
 
             var productList = restService.FindAllProductsByIsActiveAndQuantity(true, 1);
-
             for (var product : productList) {
                 product.setPhotoList(restService.FindAllProductPhotosByProductUniqueId(product.UniqueId.toString()));
             }
@@ -140,12 +139,10 @@ public class RetailerController {
             var productUniqueId = httpRequest.getParameter("UniqueId");
             var product = restService.FindProductByUniqueId(productUniqueId);
 
-            var cartList = restService.FindAllCartsByBuyerUniqueId(httpSession, buyerUserAccount.UniqueId.toString());
-            for (var cart : cartList) {
-                if (cart.Product.UniqueId == product.UniqueId) {
-                    restService.DeleteCart(cart);
-                    return cart.UniqueId.toString();
-                }
+            var cart = restService.FindCartByBuyerUniqueIdAndProductUniqueId(httpSession, buyerUserAccount.UniqueId.toString(), product.UniqueId.toString());
+            if (cart != null) {
+                restService.DeleteCart(cart);
+                return cart.UniqueId.toString();
             }
 
             return "Ürün sepette değil.";
@@ -217,7 +214,6 @@ public class RetailerController {
             var buyerUserAccount = restService.FindUserAccountByUniqueId(loginController.GetSessionUserUniqueId(httpSession));
 
             var cartList = restService.FindAllCartsByBuyerUniqueId(httpSession, buyerUserAccount.UniqueId.toString());
-
             if (cartList.isEmpty()) {
                 return "Sepet boş";
             }

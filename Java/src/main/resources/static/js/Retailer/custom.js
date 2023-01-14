@@ -88,7 +88,7 @@ $(document).ready(() => {
         customSliderRight.html("&#10095;");
         customSliderRight.appendTo('#inspectPhotoList');
         for (let counter = 0; counter < photoList.length; counter++) {
-            const img = $('<img class="customSlider w-32rem" data-sliderModal="inspect" alt="#">');
+            const img = $('<img class="customSlider w-24vw" data-sliderModal="inspect" alt="#">');
             img.attr('src', photoList[counter].src);
             img.appendTo('#inspectPhotoList');
         }
@@ -129,7 +129,7 @@ $(document).ready(() => {
         customSliderRight.html("&#10095;");
         customSliderRight.appendTo('#buyPhotoList');
         for (let counter = 0; counter < photoList.length; counter++) {
-            const img = $('<img class="customSlider w-32rem" data-sliderModal="buy"  alt="#">');
+            const img = $('<img class="customSlider w-24vw" data-sliderModal="buy"  alt="#">');
             img.attr('src', photoList[counter].src);
             img.appendTo('#buyPhotoList');
         }

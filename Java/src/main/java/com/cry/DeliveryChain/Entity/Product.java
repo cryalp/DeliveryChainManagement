@@ -49,6 +49,7 @@ public class Product {
     @Column(name = "AdditionDate")
     public LocalDateTime AdditionDate;
 
+    @JsonIgnore
     @Transient
     public List<ProductPhoto> PhotoList;
 

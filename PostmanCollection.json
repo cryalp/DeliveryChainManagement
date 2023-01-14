@@ -656,6 +656,29 @@
 					"response": []
 				},
 				{
+					"name": "FindProductPhotoByUniqueId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{REST_BASE_URL}}/FindProductPhotoByUniqueId?uniqueId=4b2cc5ab-5a98-492b-9403-7f52e1e25a03",
+							"host": [
+								"{{REST_BASE_URL}}"
+							],
+							"path": [
+								"FindProductPhotoByUniqueId"
+							],
+							"query": [
+								{
+									"key": "uniqueId",
+									"value": "4b2cc5ab-5a98-492b-9403-7f52e1e25a03"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "FindAllProductPhotos",
 					"request": {
 						"method": "GET",

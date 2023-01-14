@@ -82,7 +82,7 @@ $(document).ready(() => {
         customSliderRight.html("&#10095;");
         customSliderRight.appendTo('#inspectPhotoList');
         for (let counter = 0; counter < photoList.length; counter++) {
-            const img = $('<img class="customSlider w-32rem" data-sliderModal="inspect" alt="#">');
+            const img = $('<img class="customSlider w-24vw" data-sliderModal="inspect" alt="#">');
             img.attr('src', photoList[counter].src);
             img.appendTo('#inspectPhotoList');
         }
@@ -193,8 +193,9 @@ $(document).ready(() => {
         customSliderRight.html("&#10095;");
         customSliderRight.appendTo('#editPhotoList');
         for (let counter = 0; counter < photoList.length; counter++) {
-            const img = $('<img class="customSlider w-32rem" data-sliderModal="edit" data-editPhoto="editPhoto" alt="#">');
+            const img = $('<img class="customSlider w-24vw ml-auto mt-2" data-sliderModal="edit" alt="#">');
             img.attr('src', photoList[counter].src);
+            img.attr('data-uniqueId', photoList[counter].getAttribute("data-uniqueId"));
             img.click(() => {
                 $("#editPhoto").trigger("click");
             });
@@ -204,6 +205,15 @@ $(document).ready(() => {
 
         if (isActive) {
             $('#editIsActive').attr("checked", "checked");
+        }
+    });
+    const editRemovedPhotoList = [];
+    $('#editRemovePhoto').on("click", () => {
+        const photoUniqueId = $('img[data-sliderModal="edit"]')[customSliderIndex - 1].getAttribute("data-uniqueId");
+        if (!editRemovedPhotoList.includes(photoUniqueId)) {
+            editRemovedPhotoList.push(photoUniqueId);
+            $('img[data-uniqueId="' + photoUniqueId + '"').remove();
+            showDivs('edit', customSliderIndex);
         }
     });
 
@@ -216,6 +226,12 @@ $(document).ready(() => {
         if (photoFiles !== null) {
             Array.from(photoFiles).forEach(photo => {
                 postedFormData.append("PhotoList", photo);
+            });
+        }
+
+        if (editRemovedPhotoList.length !== 0) {
+            editRemovedPhotoList.forEach(removedPhoto => {
+                postedFormData.append("RemovedPhotoList", removedPhoto);
             });
         }
 
