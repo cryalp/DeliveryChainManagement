@@ -126,7 +126,7 @@ public class LoginController {
 
             var userAccountUniqueId = UUID.randomUUID();
             var message = "Hesabınızı onaylamak için bağlantıya tıklayınız. Eğer aktif olarak tıklanamıyorsa tarayıcınızın URL kısmında aratın.\nBağlantınız:\n";
-            var link = "https://localhost/Login/UserConfirmation?UniqueId=" + userAccountUniqueId;
+            var link = "https://deliverychainmanagement.cryalp.com/Login/UserConfirmation?UniqueId=" + userAccountUniqueId;
             var messageBody = message + link;
 
             _functions.SendMail(email, subject, messageBody);

@@ -93,7 +93,7 @@ $(document).ready(() => {
         }
     });
 
-    let photoFiles = null;
+    let photoFiles = [];
     $("#addPhotoImg").click(() => {
         $("#addPhoto").trigger("click");
     });
@@ -115,6 +115,7 @@ $(document).ready(() => {
         formData.append("Header", $('#addHeader').val());
         formData.append("Description", $('#addDescription').val());
         formData.append("Price", $('#addPrice').val());
+        formData.append("Discount", $('#addDiscount').val());
         formData.append("Quantity", $('#addQuantity').val());
         formData.append("AdditionDate", $('#addAdditionDate').val());
         Array.from(photoFiles).forEach(photo => {

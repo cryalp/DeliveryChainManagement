@@ -41,7 +41,7 @@
                         <tr th:each="product : ${productList}" th:id="${product.UniqueId}">
                             <td th:text="${product.Header}"></td>
                             <td th:text="${product.Description}"></td>
-                            <td th:text="${#numbers.formatDecimal((product.Price * (100 - product.Discount)) / 100 , 1, 'DEFAULT', 2, 'DEFAULT') + ' ₺'}"></td>
+                            <td th:text="${#numbers.formatDecimal((product.Price * (100 - product.Discount)) / 100, 1, 'DEFAULT', 2, 'DEFAULT') + ' ₺'}"></td>
                             <td th:text="${product.Quantity}"></td>
                             <td th:text="${#temporals.format(product.AdditionDate, 'dd-MM-yyyy hh:mm')}"
                                 th:attr="data-additionDate=${#temporals.format(product.AdditionDate, 'yyyy-MM-dd hh:mm:ss')}"></td>
@@ -75,7 +75,7 @@
                         <tr th:each="product : ${inActiveProductList}" th:id="${product.UniqueId}">
                             <td th:text="${product.Header}"></td>
                             <td th:text="${product.Description}"></td>
-                            <td th:text="${#numbers.formatDecimal(product.Price, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+                            <td th:text="${#numbers.formatDecimal((product.Price * (100 - product.Discount)) / 100, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
                             <td th:text="${product.Quantity}"></td>
                             <td th:text="${#temporals.format(product.AdditionDate, 'dd-MM-yyyy hh:mm')}"
                                 th:attr="data-additionDate=${#temporals.format(product.AdditionDate, 'yyyy-MM-dd hh:mm:ss')}"></td>

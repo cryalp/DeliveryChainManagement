@@ -83,13 +83,13 @@ public class SupplierController {
                 return "redirect:/";
             }
 
-            var header = httpRequest.getParameter("Header");
-            var description = httpRequest.getParameter("Description");
-            var price = httpRequest.getParameter("Price");
-            var discount = httpRequest.getParameter("Discount");
-            var quantity = httpRequest.getParameter("Quantity");
-            var additionDate = httpRequest.getParameter("AdditionDate");
-            var isActive = httpRequest.getParameter("IsActive");
+            var header = httpRequest.getParameter("Header").isEmpty() ? "BOŞBAŞLIK" : httpRequest.getParameter("Header");
+            var description = httpRequest.getParameter("Description").isEmpty() ? "" : httpRequest.getParameter("Description");
+            var price = httpRequest.getParameter("Price").isEmpty() ? "0" : httpRequest.getParameter("Price");
+            var discount = httpRequest.getParameter("Discount").isEmpty() ? "0" : httpRequest.getParameter("Discount");
+            var quantity = httpRequest.getParameter("Quantity").isEmpty() ? "0" : httpRequest.getParameter("Quantity");
+            var additionDate = httpRequest.getParameter("AdditionDate").isEmpty() ? LocalDateTime.now().toString() : httpRequest.getParameter("AdditionDate");
+            var isActive = httpRequest.getParameter("IsActive").isEmpty() ? "false" : httpRequest.getParameter("IsActive");
             var photoList = ((MultipartHttpServletRequest) httpRequest).getFiles("PhotoList");
 
             var currentAdditionDate = LocalDateTime.now().isBefore(LocalDateTime.parse(additionDate)) ? LocalDateTime.now() : LocalDateTime.parse(additionDate);
@@ -137,22 +137,24 @@ public class SupplierController {
                 return false;
             }
 
-            var header = httpRequest.getParameter("Header");
-            var description = httpRequest.getParameter("Description");
-            var price = httpRequest.getParameter("Price");
-            var discount = httpRequest.getParameter("Discount");
-            var quantity = httpRequest.getParameter("Quantity");
-            var additionDate = httpRequest.getParameter("AdditionDate");
+            var header = httpRequest.getParameter("Header").isEmpty() ? "BOŞBAŞLIK" : httpRequest.getParameter("Header");
+            var description = httpRequest.getParameter("Description").isEmpty() ? "" : httpRequest.getParameter("Description");
+            var price = httpRequest.getParameter("Price").isEmpty() ? "0" : httpRequest.getParameter("Price");
+            var discount = httpRequest.getParameter("Discount").isEmpty() ? "0" : httpRequest.getParameter("Discount");
+            var quantity = httpRequest.getParameter("Quantity").isEmpty() ? "0" : httpRequest.getParameter("Quantity");
+            var additionDate = httpRequest.getParameter("AdditionDate").isEmpty() ? LocalDateTime.now().toString() : httpRequest.getParameter("AdditionDate");
+            var isActive = httpRequest.getParameter("IsActive").isEmpty() ? "false" : httpRequest.getParameter("IsActive");
             var photoList = ((MultipartHttpServletRequest) httpRequest).getFiles("PhotoList");
             var removedPhotoList = httpRequest.getParameterValues("RemovedPhotoList");
-            var isActive = httpRequest.getParameter("IsActive");
+
+            var currentAdditionDate = LocalDateTime.now().isBefore(LocalDateTime.parse(additionDate)) ? LocalDateTime.now() : LocalDateTime.parse(additionDate);
 
             product.Header = header;
             product.Description = description;
             product.Price = new BigDecimal(price);
             product.Discount = Float.parseFloat(discount);
             product.Quantity = Integer.parseInt(quantity);
-            product.AdditionDate = LocalDateTime.parse(additionDate);
+            product.AdditionDate = currentAdditionDate;
             product.IsActive = Boolean.parseBoolean(isActive);
 
             restService.SaveProduct(product);

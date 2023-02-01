@@ -21,14 +21,14 @@
                             <th>Adet</th>
                             <th>Fatura Tarihi</th>
                             <th>Fotoğraf</th>
-                            <th th:text="'Toplam - ' + ${#numbers.formatDecimal(unApprovedBillMap.value[0].Bill.TotalPrice, 0, 'DEFAULT', 2, 'DEFAULT')} + '₺'"
+                            <th th:text="'Toplam - ' + ${#numbers.formatDecimal(unApprovedBillMap.value[0].Bill.TotalPrice, 1, 'DEFAULT', 2, 'DEFAULT')} + '₺'"
                                 class="text-nowrap">
                             </th>
                             <th>
                                 <a data-name="orderApprove" th:td-uniqueId="${unApprovedBillMap.value[0].Bill.UniqueId}" type="button" class="btn btn-success">Onayla</a>
                             </th>
                             <th>
-                                <a data-name="orderReject" th:td-uniqueId="${unApprovedBillMap.value[0].Bill.UniqueId}" type="button" class="btn btn-success">Reddet</a>
+                                <a data-name="orderReject" th:td-uniqueId="${unApprovedBillMap.value[0].Bill.UniqueId}" type="button" class="btn btn-danger">Reddet</a>
                             </th>
                         </tr>
                     </thead>
@@ -36,7 +36,7 @@
                         <tr th:each="unApprovedBill : ${unApprovedBillMap.value}" th:id="${unApprovedBill.Bill.UniqueId}">
                             <td th:text="${unApprovedBill.Product.Header}" class="text-nowrap"></td>
                             <td th:text="${unApprovedBill.Supplier.Username}"></td>
-                            <td th:text="${#numbers.formatDecimal(unApprovedBill.CurrentPrice, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+                            <td th:text="${#numbers.formatDecimal(unApprovedBill.CurrentPrice, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
                             <td th:text="${unApprovedBill.Quantity}"></td>
                             <td th:text="${#temporals.format(unApprovedBill.Bill.CreationDate, 'dd-MM-yyyy hh:mm')}"
                                 th:attr="data-additionDate=${#temporals.format(unApprovedBill.Bill.CreationDate, 'yyyy-MM-dd hh:mm:ss')}">
@@ -61,7 +61,7 @@
                             <th>Fatura Tarihi</th>
                             <th>Fotoğraf</th>
                             <th th:if="${!billMap.value.empty}"
-                                th:text="'Toplam - ' + ${#numbers.formatDecimal(billMap.value[0].Bill.TotalPrice, 0, 'DEFAULT', 2, 'DEFAULT')} + '₺'" class="text-nowrap">
+                                th:text="'Toplam - ' + ${#numbers.formatDecimal(billMap.value[0].Bill.TotalPrice, 1, 'DEFAULT', 2, 'DEFAULT')} + '₺'" class="text-nowrap">
                             </th>
                         </tr>
                     </thead>
@@ -79,7 +79,7 @@
                         <tr th:each="bill : ${billMap.value}" th:id="${bill.Bill.UniqueId}">
                             <td th:text="${bill.Product.Header}" class="text-nowrap"></td>
                             <td th:text="${bill.Supplier.Username}"></td>
-                            <td th:text="${#numbers.formatDecimal(bill.CurrentPrice, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+                            <td th:text="${#numbers.formatDecimal(bill.CurrentPrice, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
                             <td th:text="${bill.Quantity}"></td>
                             <td th:text="${#temporals.format(bill.Bill.CreationDate, 'dd-MM-yyyy hh:mm')}"
                                 th:attr="data-additionDate=${#temporals.format(bill.Bill.CreationDate, 'yyyy-MM-dd hh:mm:ss')}">

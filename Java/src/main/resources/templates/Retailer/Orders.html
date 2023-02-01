@@ -19,7 +19,7 @@
                             <th>Adet</th>
                             <th>Fatura Tarihi</th>
                             <th>Fotoğraf</th>
-                            <th th:text="'Toplam - ' + ${#numbers.formatDecimal(unApprovedBillList[0].Bill.TotalPrice, 0, 'DEFAULT', 2, 'DEFAULT')} + '₺'"
+                            <th th:text="'Toplam - ' + ${#numbers.formatDecimal(unApprovedBillList[0].Bill.TotalPrice, 1, 'DEFAULT', 2, 'DEFAULT')} + '₺'"
                                 class="text-nowrap">
                             </th>
                             <th>
@@ -33,7 +33,7 @@
                         <tr th:each="unApprovedBillProduct : ${unApprovedBillList}" th:id="${unApprovedBillProduct.Bill.UniqueId}">
                             <td th:text="${unApprovedBillProduct.Product.Header}" class="text-nowrap"></td>
                             <td th:text="${unApprovedBillProduct.Supplier.Username}"></td>
-                            <td th:text="${#numbers.formatDecimal(unApprovedBillProduct.CurrentPrice, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+                            <td th:text="${#numbers.formatDecimal(unApprovedBillProduct.CurrentPrice, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
                             <td th:text="${unApprovedBillProduct.Quantity}"></td>
                             <td th:text="${#temporals.format(unApprovedBillProduct.Bill.CreationDate, 'dd-MM-yyyy hh:mm')}"
                                 th:attr="data-additionDate=${#temporals.format(unApprovedBillProduct.Bill.CreationDate, 'yyyy-MM-dd hh:mm:ss')}">
@@ -75,7 +75,7 @@
                         <tr th:each="billProduct : ${billList}" th:id="${billProduct.Bill.UniqueId}">
                             <td th:text="${billProduct.Product.Header}" class="text-nowrap"></td>
                             <td th:text="${billProduct.Supplier.Username}"></td>
-                            <td th:text="${#numbers.formatDecimal(billProduct.CurrentPrice, 0, 'DEFAULT', 2, 'DEFAULT')}"></td>
+                            <td th:text="${#numbers.formatDecimal(billProduct.CurrentPrice, 1, 'DEFAULT', 2, 'DEFAULT')}"></td>
                             <td th:text="${billProduct.Quantity}"></td>
                             <td th:text="${#temporals.format(billProduct.Bill.CreationDate, 'dd-MM-yyyy hh:mm')}"
                                 th:attr="data-additionDate=${#temporals.format(billProduct.Bill.CreationDate, 'yyyy-MM-dd hh:mm:ss')}">

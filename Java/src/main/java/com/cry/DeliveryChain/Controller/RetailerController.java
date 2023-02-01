@@ -184,7 +184,8 @@ public class RetailerController {
                     product.Quantity = cartProduct.Quantity;
                     productList.add(product);
 
-                    cartTotalPriceObject.totalPrice = cartTotalPriceObject.totalPrice.add(product.Price.multiply(BigDecimal.valueOf(product.Quantity)));
+                    cartTotalPriceObject.totalPrice = cartTotalPriceObject.totalPrice
+                            .add(product.Price.multiply(BigDecimal.valueOf((100 - product.Discount) / 100)).multiply(BigDecimal.valueOf(product.Quantity)));
                 } else {
                     inActiveProductList.add(product);
                 }
@@ -227,8 +228,10 @@ public class RetailerController {
                     return "'" + product.Header + "' isimli ürün artık aktif değil.";
                 }
 
-                var billProduct = new BillProduct(buyerUserAccount, bill, product, cart.Quantity, product.Price);
-                bill.TotalPrice = bill.TotalPrice.add(product.Price.multiply(BigDecimal.valueOf(cart.Quantity)));
+                var billProduct =
+                        new BillProduct(product.UserAccount, bill, product, cart.Quantity, product.Price.multiply(BigDecimal.valueOf((100 - product.Discount) / 100)));
+                var totalPrice = product.Price.multiply(BigDecimal.valueOf((100 - product.Discount) / 100)).multiply(BigDecimal.valueOf(cart.Quantity));
+                bill.TotalPrice = bill.TotalPrice.add(totalPrice);
                 restService.SaveBillProduct(billProduct);
 
                 product.Quantity -= cart.Quantity;
